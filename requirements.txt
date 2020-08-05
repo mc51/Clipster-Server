@@ -1,0 +1,3 @@
+Django
+dj_database_url
+djangorestframework
