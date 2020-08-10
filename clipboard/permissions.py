@@ -11,5 +11,5 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         # anyone can read i.e. GET, OPTIONS, etc
         if request.method in permissions.SAFE_METHODS:
             return True
-        
+
         return obj.user == request.user

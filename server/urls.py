@@ -17,12 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from clipboard import views as cb
 
-
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^$', cb.ListClip.as_view()),
-    url(r'^copy-paste/', cb.CopyPaste.as_view()),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^register/', cb.UserRegister.as_view()),
-    url(r'^verify-user/', cb.UserVerify.as_view()),
+    url(r"^admin/", admin.site.urls),
+    url(r"^$", cb.ListClip.as_view()),
+    url(r"^copy-paste/", cb.CopyPaste.as_view()),
+    url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    url(r"^register/", cb.UserRegister.as_view()),
+    url(r"^verify-user/", cb.UserVerify.as_view()),
 ]
