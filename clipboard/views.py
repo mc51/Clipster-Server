@@ -10,18 +10,17 @@ from rest_framework import permissions
 from rest_framework.throttling import AnonRateThrottle
 from django.contrib.auth.password_validation import validate_password, ValidationError
 
-# ToDos: Rate Limits per user and total for login  / register
 
 class ListClip(APIView):
     """
     List the most recently copied texts. I am calling them 'clips'.
     """
+
     def get(self, request):
         # Only show own clips
         clips = Clip.objects.filter(user=self.request.user)
         serializer = ClipSerializer(clips, many=True)
         return Response(serializer.data)
-
 
     def post(self, request):
         serializer = ClipSerializer(data=request.data)
@@ -37,6 +36,7 @@ class CopyPaste(APIView):
     """
     Update and retrieve the data.
     """
+
     def get_clip(self, user):
         try:
             return Clip.objects.get(user=user)
@@ -68,19 +68,20 @@ class UserRegister(APIView):
 
     def post(self, request):
         try:
-            validate_password(request.data['password'])
+            validate_password(request.data["password"])
         except ValidationError as e:
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer = UserSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data['username'], status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data["username"], status=status.HTTP_201_CREATED
+                )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserVerify(APIView):
-
     def get(self, request):
         return Response(status=status.HTTP_200_OK)
 

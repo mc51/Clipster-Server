@@ -1,4 +1,4 @@
-# Clipster - Desktop Client
+# Clipster - Cloud Server
 
 Clipster is a multi platform cloud clipboard:  
 Copy a text on your smartphone and paste it on your desktop, or vice versa.  
@@ -133,5 +133,4 @@ clipster listen
 
 ## Credits
 
-Client based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard)  
-Install script based on [Docker](https://www.docker.com/)
+Server based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard)  
