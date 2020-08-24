@@ -25,7 +25,7 @@ if [ "$userid" -ne 0 ]; then
 fi
 
 echo
-echo "OK: Running as user $USER"
+echo "INFO: Running as user $USER"
 echo
 
 
@@ -35,12 +35,17 @@ if command_exists python3; then
         echo
         echo "ERROR: This script requires python 3.5 or greater. Only found $ver"
         exit 1
+    else
+        echo
+        echo "OK: Using Python $ver"
     fi
-    if command_exists pip3; then
+    if command_exists python3 -m pip; then
+        echo
         echo "OK: Found \"pip3\". Ready to install clipster_server python package and requirements"
         echo
-        pip3 install --user .
+        python3 -m pip install --user .
     else
+        echo
         echo "ERROR: Could not find pip3, which is required. Learn how to install it here: https://pip.pypa.io/en/stable/installing/"
         exit 1
     fi
