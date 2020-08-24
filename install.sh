@@ -37,6 +37,7 @@ if command_exists $PYTHON_EXEC; then
         read -r -p "Enter path or name to a different python version [e.g. /usr/bin/python3.7]:  " PYTHON_EXEC
         ver=$(${PYTHON_EXEC} -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
     done
+        echo
         echo "OK: Using Python $ver"
     if command_exists ${PYTHON_EXEC} -m pip; then
         echo
@@ -202,7 +203,7 @@ User=$USER
 Environment=CLIPSTER_SECRET=$RANDOM_SECRET
 
 [Install]
-WantedBy=multi-user.target" | $sh_c tee /etc/systemd/system/clipster_server.service
+WantedBy=multi-user.target" | $sh_c "tee /etc/systemd/system/clipster_server.service"
 
 echo
 echo "INFO: running \"systemctl daemon-reload\" to reload systemd daemon config."
