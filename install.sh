@@ -4,6 +4,7 @@
 set -e
 DEFAULT_INTERFACE="0.0.0.0:9999"
 RANDOM_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+PYTHON_EXEC=python3
 
 command_exists() {
     command -v "$@" > /dev/null 2>&1
@@ -26,29 +27,29 @@ fi
 
 echo
 echo "INFO: Running as user $USER"
-echo
 
-
-if command_exists python3; then
-    ver=$(python3 -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
-    if [ "$ver" -lt "35" ]; then
+if command_exists $PYTHON_EXEC; then
+    ver=$(${PYTHON_EXEC} -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
+    while [ "$ver" -lt "36" ]; do
         echo
-        echo "ERROR: This script requires python 3.5 or greater. Only found $ver"
-        exit 1
-    else
+        echo "ERROR: This package requires python 3.6 or greater. Your python3 executable is only $ver "
         echo
+        read -r -p "Enter path or name to a different python version [e.g. /usr/bin/python3.7]:  " PYTHON_EXEC
+        ver=$(${PYTHON_EXEC} -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
+    done
         echo "OK: Using Python $ver"
-    fi
     if command_exists python3 -m pip; then
         echo
-        echo "OK: Found \"pip3\". Ready to install clipster_server python package and requirements"
+        echo "OK: Found pip. Ready to install clipster_server python package and requirements"
         echo
-        python3 -m pip install --user .
+        $PYTHON_EXEC -m pip install --user .
     else
         echo
-        echo "ERROR: Could not find pip3, which is required. Learn how to install it here: https://pip.pypa.io/en/stable/installing/"
+        echo "ERROR: Could not find pip, which is required. Learn how to install it here: https://pip.pypa.io/en/stable/installing/"
         exit 1
     fi
+else
+    echo "ERROR: Coult not find $PYTHON_EXEC exectuable. Make sure python is available "
 fi
 
 echo
