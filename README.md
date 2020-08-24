@@ -11,7 +11,7 @@ Supports Android, Linux, MacOS and Windows.
 First, clone the repo and enter the directory:
 
 ``` bash
-git clone https://github.com/mc51/Clipster-Desktop.git && cd Clipster-Desktop
+git clone https://github.com/mc51/Clipster-Server.git && cd Clipster-Server
 ```
 
 Then, just run the install script:
@@ -24,111 +24,149 @@ The install script takes care of everything.
   
 If you absolutely need to, you can install manually.  
   
-First, install the python package:
+First, install the python package, which will also install the requirements:
 
 ``` bash
 pip install .
 ```
 
-Now, the `clipster` command will be available in the command line. Clipster depends on the `xsel` or `xclip` packages. On some distributions, you will to need manually install them. On Debian/Ubuntu do:
+Now, set a secret key (will be used to encrypt the Django database) and setup the Django install:
 
 ```bash
-sudo apt-get install xsel
+export CLIPSTER_SECRET=YourVeryLongRandomSeCuReString
+python manage.py migrate
 ```
 
-Now, you can start the account registration:
+[Gunicorn](https://docs.gunicorn.org/en/latest/) is a WSGCI server. It will deal with requests to clipster.  
+To configure it, create a file `guni_config.py` with this content:
+
+```python
+import sys
+
+BASE_DIR = <CLIPSTER_SERVER_DIR>
+sys.path.append(BASE_DIR)
+
+bind = '0.0.0.0:9999'
+backlog = 20
+
+import multiprocessing
+workers = 1
+worker_class = 'sync'
+worker_connections = 10
+timeout = 300
+keepalive = 2
+
+certfile = <CERTFILE>
+keyfile = <KEYFILE>
+ssl_version = 'TLS'
+
+spew = False
+loglevel = 'error'
+accesslog = '/tmp/clipster_access_log'
+errorlog = '/tmp/clipster_error_log'
+
+def post_fork(server, worker):
+    server.log.info('Worker spawned (pid: %s)', worker.pid)
+
+def pre_fork(server, worker):
+    pass
+
+def pre_exec(server):
+    server.log.info('Forked child, re-executing.')
+
+def when_ready(server):
+    server.log.info('Server is ready. Spawning workers')
+
+def worker_int(worker):
+    worker.log.info('worker received INT or QUIT signal')
+
+    ## get traceback info
+    import threading, sys, traceback
+    id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
+    code = []
+    for threadId, stack in sys._current_frames().items():
+        code.append('\n# Thread: %s(%d)' % (id2name.get(threadId,''),
+            threadId))
+        for filename, lineno, name, line in traceback.extract_stack(stack):
+            code.append('File: '%s', line %d, in %s' % (filename,
+                lineno, name))
+            if line:
+                code.append('  %s' % (line.strip()))
+    worker.log.debug('\n'.join(code))
+
+def worker_abort(worker):
+    worker.log.info('worker received SIGABRT signal')
+```
+
+Replace `<CLIPSTER_SERVER_DIR>` with the current directory.  
+You should always run the server over **HTTPS only**. To configure SSL, replace `<CERTFILE>` with your SSL certification file and `<KEYFILE>` with your SSL private key file.  
+Per default, the server will listen on all interfaces on port 9999. Change the `bind=` line to restrict access, e.g. listen only on your home network.  
+Then, make the config file executable:
 
 ``` bash
-clipster register
+chmod 755 guni_config.py
 ```
 
-You can use your own [clipster-server](https://github.com/mc51/Clipster-Server), or the default public server.  
-After registering an account, you need to create a config file in `~/.config/clipster/config`. The file should contain your settings from the registration:
+Next, get the path to your `gunicorn` binary:
 
 ``` bash
-[settings]
-server = https://data-dive.com:9999
-username = YourUser
-password = YourPassword
+whereis gunicorn
 ```
 
-For a convenient experience, you should run clipster as a background service. This will automatically take care of copying and pasting to the server and is the intended use.  
-For this, you need to setup a `systemd` service. First, find the absolute path to your installation:
+Next, we set up a  `systemd` service to automatically take care of (re)starting the gunicorn server.  
+Create a new file (as root) `/etc/systemd/system/clipster_server.service`:
 
-```bash
-whereis clipster
-```
 
-Following, create the file (as root) `/etc/systemd/system/clipster.service` with the following content:
-
-```
+``` bash
 [Unit]
-Description=Clipster - A Multi Platform Cloud Clipboard Clipboard
+Description=Clipster Server - A Multi Platform Cloud Clipboard
 After=network.target
 
 [Service]
-Environment="DISPLAY=:0.0"
-WorkingDirectory=/tmp
-ExecStart=<PATH>
+WorkingDirectory=<CLIPSTER_SERVER_DIR>
+ExecStart=<GUNICORN_BIN> --config <GUNI_CONFIG_FILE> server.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 Restart=always
 RestartSec=1
+PrivateTmp=true
+User=<USER>
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target"
 ```
 
-Change \<PATH\> to your installation path. Now, run the following to reload the configuration, enable auto start, and start the service:
+Replace `<CLIPSTER_SERVER_DIR>` with the path to the cloned repository. For `<GUNICORN_BIN>` set the path from just before to the gunicorn executable. The path to the config file for gunicorn we've created before goes into `<GUNI_CONFIG_FILE>`. Finally, replace `<USER>` with your username.  
+ Now, run the following to reload the configuration, enable auto start, and start the service:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable clipster
-sudo systemctl start clipster
+sudo systemctl enable clipster_server
+sudo systemctl start clipster_server
 ```
 
 Finally, check the status with:
 
 ```bash
-sudo systemctl status clipster
+sudo systemctl status clipster_server
 ```
 
 If all went fine, you should see:
 
 ``` bash
-● clipster.service - Clipster - A Multi Platform Cloud Clipboard
-   Loaded: loaded (/etc/systemd/system/clipster.service; enabled; vendor preset: enabled)
-   Active: active (running) since Mon 2020-08-01 12:00:0 CEST; 30min ago
+● clipster_server.service - Clipster Server - A Multi Platform Cloud Clipboard
+   Loaded: loaded (/etc/systemd/system/clipster_server.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sun 2020-08-23 20:43:15 CEST; 13h ago
+ Main PID: 16672 (gunicorn)
+    Tasks: 2 (limit: 4915)
+   CGroup: /system.slice/clipster_server.service
+           ├─16672 /opt/bin/python /opt/bin/gunicorn --config /home/mc/clipster-server/guni_clipster.py server.wsgi:application
+           └─17464 /opt/bin/python /opt/bin/gunicorn --config /home/mc/clipster-server/guni_clipster.py server.wsgi:application
+
+Aug 23 20:43:15 ace systemd[1]: Started Clipster Server - A Multi Platform Cloud Clipboard.
 ```
 
-Now, you can [use](#usage) clipster!
-
-## Usage
-
-When clipster is running as a background service, your current clipboard text will automatically be sent to the server.  
-To get the current text from the server, copy the keyword "clipster" to your clipboard. Clipster will fetch the current text from the server and put it in your local clipboard.  
-  
-For manual usage, there are the following commands.  
-To copy the current clipboard text to the server:  
-
-```bash
-clipster copy
-```
-
-To retrieve a text from the server to the local clipboard:
-```bash
-clipster paste
-```
-
-To register a new account or change your current account (this will change your `~/.config/clipster/config` file):
-```bash
-clipster register
-```
-
-To run clipster in the background (only needed during [setup](#setup)):
-```bash
-clipster listen
-```
+Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) or via browser.
 
 
 ## Credits
