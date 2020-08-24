@@ -38,7 +38,7 @@ if command_exists $PYTHON_EXEC; then
         ver=$(${PYTHON_EXEC} -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
     done
         echo "OK: Using Python $ver"
-    if command_exists python3 -m pip; then
+    if command_exists ${PYTHON_EXEC} -m pip; then
         echo
         echo "OK: Found pip. Ready to install clipster_server python package and requirements"
         echo
@@ -56,8 +56,8 @@ echo
 echo "INFO: We will prepare django now"
 echo
 
-export CLIPSTER_SECRET=$RANDOM_SECRET
-python3 manage.py migrate
+# export CLIPSTER_SECRET=$RANDOM_SECRET
+$PYTHON_EXEC manage.py migrate
 
 if command_exists gunicorn; then
     echo
