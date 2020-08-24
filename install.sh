@@ -31,7 +31,7 @@ echo
 if command_exists pip; then
     echo "OK: Found \"pip\". Ready to install python script"
     echo
-    pip install .
+    pip install --user .
 else
     echo "ERROR: Could not find pip, which is required. Learn how to install it here: https://pip.pypa.io/en/stable/installing/"
     exit 1

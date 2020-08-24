@@ -27,7 +27,7 @@ If you absolutely need to, you can install manually.
 First, install the python package, which will also install the requirements:
 
 ``` bash
-pip install .
+pip install --user .
 ```
 
 Now, set a secret key (will be used to encrypt the Django database) and setup the Django install:
