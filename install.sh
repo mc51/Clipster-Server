@@ -28,13 +28,22 @@ echo
 echo "OK: Running as user $USER"
 echo
 
-if command_exists pip; then
-    echo "OK: Found \"pip\". Ready to install python script"
-    echo
-    pip install --user .
-else
-    echo "ERROR: Could not find pip, which is required. Learn how to install it here: https://pip.pypa.io/en/stable/installing/"
-    exit 1
+
+if command_exists python3; then
+    ver=$(python3 -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
+    if [ "$ver" -lt "35" ]; then
+        echo
+        echo "ERROR: This script requires python 3.5 or greater. Only found $ver"
+        exit 1
+    fi
+    if command_exists pip3; then
+        echo "OK: Found \"pip3\". Ready to install clipster_server python package and requirements"
+        echo
+        pip3 install --user .
+    else
+        echo "ERROR: Could not find pip3, which is required. Learn how to install it here: https://pip.pypa.io/en/stable/installing/"
+        exit 1
+    fi
 fi
 
 echo
@@ -42,7 +51,7 @@ echo "INFO: We will prepare django now"
 echo
 
 export CLIPSTER_SECRET=$RANDOM_SECRET
-python manage.py migrate
+python3 manage.py migrate
 
 if command_exists gunicorn; then
     echo
