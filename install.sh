@@ -205,10 +205,11 @@ Environment=CLIPSTER_SECRET=$RANDOM_SECRET
 WantedBy=multi-user.target" | $sh_c "tee /etc/systemd/system/clipster_server.service"
 
 echo
-echo "INFO: running \"systemctl daemon-reload\" to reload systemd daemon config."
+echo "INFO: running \"systemctl daemon-reload\" to reload systemd daemon config"
 $sh_c "systemctl daemon-reload"
 echo
-echo "INFO: running \"systemctl enable clipster_server\" to enable autostart of clipster as daemon."
+echo "INFO: running \"systemctl enable clipster_server\" to enable autostart of clipster as daemon"
+sleep 1s
 $sh_c "systemctl enable clipster_server"
 echo
 echo "INFO: running \"systemctl start clipster_server\" to start clipster daemon."
@@ -217,6 +218,7 @@ $sh_c "systemctl start clipster_server"
 echo
 echo "INFO: running \"systemctl status clipster_server\" to check if clipster is running."
 
+sleep 3s
 if $sh_c "systemctl status clipster_server"; then
     echo
     echo "OK: Installation completed. Clipster Server is running."
