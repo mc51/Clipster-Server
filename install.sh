@@ -57,7 +57,9 @@ echo
 echo "INFO: We will prepare django now"
 echo
 
-# export CLIPSTER_SECRET=$RANDOM_SECRET
+# Set a random SECRET KEY for Django
+sed -i "s/^SECRET_KEY = None$/SECRET_KEY=${RANDOM_SECRET}/" server/settings.py
+# Run Django migrations: Create DB Tables
 $PYTHON_EXEC manage.py migrate
 
 if command_exists gunicorn; then
@@ -111,8 +113,7 @@ echo "INFO: creating gunicorn configuration file $GUNI_CONFIG_FILE"
 echo
 
 # Write gunicorn config file for serving clipster server
-echo "
-import sys
+echo "import sys
 
 BASE_DIR = '$PWD'
 sys.path.append(BASE_DIR)
@@ -159,8 +160,7 @@ def worker_int(worker):
         code.append('\\\n# Thread: %s(%d)' % (id2name.get(threadId,''),
             threadId))
         for filename, lineno, name, line in traceback.extract_stack(stack):
-            code.append('File: '%s', line %d, in %s' % (filename,
-                lineno, name))
+            code.append(\"File: '%s', line %d, in %s\" % (filename, lineno, name))
             if line:
                 code.append('  %s' % (line.strip()))
     worker.log.debug('\\\n'.join(code))
@@ -186,8 +186,7 @@ echo "INFO: We will need to run the following commands as root "
 echo
 
 # Write Systemd config file for auto loading script
-echo "
-[Unit]
+echo "[Unit]
 Description=Clipster Server - A Multi Platform Cloud Clipboard
 After=network.target
 
