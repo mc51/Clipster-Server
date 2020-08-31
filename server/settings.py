@@ -18,11 +18,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECRET_KEY = os.getenv("CLIPSTER_SECRET")
 SECRET_KEY = None
 if not SECRET_KEY:
-    print("ERROR: You must specify a secret key")
     print(
-        "You can use an environment variable like this: export CLIPSTER_SECRET=YourLongAndRandomKeyString"
+        "ERROR: You must specify a secret key. Edit server/settings.py and set a key there."
     )
-    print("Alternatively, edit server/settings.py and set a key there.")
     sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!

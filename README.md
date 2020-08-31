@@ -5,7 +5,9 @@ Copy a text on your smartphone and paste it on your desktop, or vice versa.
 Easy, secure, open source.  
 Supports Android, Linux, MacOS and Windows.  
   
-You can run the server on your own machine. It is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app, the light weight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
+You can run the server on your own machine. Here is the [Desktop-Client](https://github.com/mc51/Clipster-Desktop).  
+
+Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the light weight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
 
 ## Automatic Setup
 
@@ -42,7 +44,6 @@ sed -i "s/^SECRET_KEY = None$/SECRET_KEY=\"YourSuperSecretAndLongKey"/" server/s
 Next, prepare Django (this creates the database tables)
 
 ```bash
-export CLIPSTER_SECRET=YourVeryLongRandomSeCuReString
 python manage.py migrate
 ```
 
@@ -109,7 +110,7 @@ def worker_abort(worker):
 
 Replace `<CLIPSTER_SERVER_DIR>` with the current directory.  
 You should always run the server over **HTTPS only**. To configure SSL, replace `<CERTFILE>` with your SSL certification file and `<KEYFILE>` with your SSL private key file.  
-Per default, the server will listen on all interfaces on port 9999. Change the `bind=` line to restrict access, e.g. listen only on your home network. For more options, check the [documentation](https://docs.gunicorn.org/en/stable/configure.html).
+Per default, the server will listen on all interfaces on port 9999. Change the `bind=` line to restrict access, e.g. listen only on your home network. For more options, check the [documentation](https://docs.gunicorn.org/en/stable/configure.html).  
 Then, make the config file executable:
 
 ``` bash
@@ -174,7 +175,7 @@ If all went fine, you should see:
 Aug 23 20:43:15 ace systemd[1]: Started Clipster Server - A Multi Platform Cloud Clipboard.
 ```
 
-Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) or via browser using the URL `https://yourserver.com:9999". 
+Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) or via browser using the URL `https://yourserver.com:9999`. 
 
 
 ## Credits
