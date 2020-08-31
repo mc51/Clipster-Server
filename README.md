@@ -4,9 +4,10 @@ Clipster is a multi platform cloud clipboard:
 Copy a text on your smartphone and paste it on your desktop, or vice versa.  
 Easy, secure, open source.  
 Supports Android, Linux, MacOS and Windows.  
+  
+You can run the server on your own machine. It is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app, the light weight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
 
-
-## Setup
+## Automatic Setup
 
 First, clone the repo and enter the directory:
 
@@ -21,8 +22,10 @@ sh install.sh
 ```
 
 The install script takes care of everything.  
+
+## Manual Setup
   
-If you absolutely need to, you can install manually.  
+If you need to, you can install manually.  
   
 First, install the python package, which will also install the requirements:
 
@@ -30,14 +33,20 @@ First, install the python package, which will also install the requirements:
 pip install --user .
 ```
 
-Now, set a secret key (will be used to encrypt the Django database) and setup the Django install:
+Then, set a secret key for the Django installation:
+
+```bash
+sed -i "s/^SECRET_KEY = None$/SECRET_KEY=\"YourSuperSecretAndLongKey"/" server/settings.py
+```
+
+Next, prepare Django (this creates the database tables)
 
 ```bash
 export CLIPSTER_SECRET=YourVeryLongRandomSeCuReString
 python manage.py migrate
 ```
 
-[Gunicorn](https://docs.gunicorn.org/en/latest/) is a WSGCI server. It will deal with requests to clipster.  
+[Gunicorn](https://docs.gunicorn.org/en/latest/) is the WSGCI server that will serve our App. It deals with requests to clipster.  
 To configure it, create a file `guni_config.py` with this content:
 
 ```python
@@ -100,22 +109,21 @@ def worker_abort(worker):
 
 Replace `<CLIPSTER_SERVER_DIR>` with the current directory.  
 You should always run the server over **HTTPS only**. To configure SSL, replace `<CERTFILE>` with your SSL certification file and `<KEYFILE>` with your SSL private key file.  
-Per default, the server will listen on all interfaces on port 9999. Change the `bind=` line to restrict access, e.g. listen only on your home network.  
+Per default, the server will listen on all interfaces on port 9999. Change the `bind=` line to restrict access, e.g. listen only on your home network. For more options, check the [documentation](https://docs.gunicorn.org/en/stable/configure.html).
 Then, make the config file executable:
 
 ``` bash
 chmod 755 guni_config.py
 ```
 
-Next, get the path to your `gunicorn` binary:
+Following, get the path to your `gunicorn` binary:
 
 ``` bash
 whereis gunicorn
 ```
 
-Next, we set up a  `systemd` service to automatically take care of (re)starting the gunicorn server.  
+Next, we set up a `systemd` service to automatically take care of (re)starting the gunicorn server.  
 Create a new file (as root) `/etc/systemd/system/clipster_server.service`:
-
 
 ``` bash
 [Unit]
@@ -137,7 +145,7 @@ WantedBy=multi-user.target"
 ```
 
 Replace `<CLIPSTER_SERVER_DIR>` with the path to the cloned repository. For `<GUNICORN_BIN>` set the path from just before to the gunicorn executable. The path to the config file for gunicorn we've created before goes into `<GUNI_CONFIG_FILE>`. Finally, replace `<USER>` with your username.  
- Now, run the following to reload the configuration, enable auto start, and start the service:
+Now, run the following to reload the configuration, enable auto start, and start the service:
 
 ```bash
 sudo systemctl daemon-reload
@@ -166,9 +174,10 @@ If all went fine, you should see:
 Aug 23 20:43:15 ace systemd[1]: Started Clipster Server - A Multi Platform Cloud Clipboard.
 ```
 
-Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) or via browser.
+Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) or via browser using the URL `https://yourserver.com:9999". 
 
 
 ## Credits
 
-Server based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard)  
+Server based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard).  
+Running on [Django](https://www.djangoproject.com/) and served by [Gunicorn](https://gunicorn.org/).

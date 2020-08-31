@@ -26,11 +26,11 @@ if not SECRET_KEY:
     sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Add your domain / ip to the allowed hosts
-ALLOWED_HOSTS = ["data-dive.com", "localhost", "127.0.0.1", "::1"]
-
+# "*" allows all !
+ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1", "::1"]
 
 # Application definition
 INSTALLED_APPS = [

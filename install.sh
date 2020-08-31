@@ -1,6 +1,8 @@
 #!/bin/sh
 # MC51 - Install script for Clipster Server
+# https://github.com/mc51/Clipster-Server
 # Borrowed stuff from the https://get.docker.com shell script
+
 set -e
 DEFAULT_INTERFACE="0.0.0.0:9999"
 RANDOM_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -111,6 +113,7 @@ GUNI_CONFIG_FILE=${PWD}"/guni_clipster.py"
 echo
 echo "INFO: creating gunicorn configuration file $GUNI_CONFIG_FILE"
 echo
+sleep 1s
 
 # Write gunicorn config file for serving clipster server
 echo "import sys
@@ -184,6 +187,7 @@ echo "INFO: Creating /etc/systemd/system/clipster_server.service file"
 echo
 echo "INFO: We will need to run the following commands as root "
 echo
+sleep 1s
 
 # Write Systemd config file for auto loading script
 echo "[Unit]
@@ -199,7 +203,6 @@ Restart=always
 RestartSec=1
 PrivateTmp=true
 User=$USER
-Environment=CLIPSTER_SECRET=$RANDOM_SECRET
 
 [Install]
 WantedBy=multi-user.target" | $sh_c "tee /etc/systemd/system/clipster_server.service"
@@ -217,6 +220,7 @@ $sh_c "systemctl stop clipster_server"
 $sh_c "systemctl start clipster_server"
 echo
 echo "INFO: running \"systemctl status clipster_server\" to check if clipster is running."
+echo
 
 sleep 3s
 if $sh_c "systemctl status clipster_server"; then
