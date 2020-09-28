@@ -5,7 +5,7 @@ Copy a text on your smartphone and paste it on your desktop, or vice versa.
 Easy, secure, open source.  
 Supports Android, Linux, MacOS and Windows.  
   
-You can run the server on your own machine. Here is the [Desktop-Client](https://github.com/mc51/Clipster-Desktop).  
+You can run the server on your own machine. Here is the [Clipster-Desktop Client](https://github.com/mc51/Clipster-Desktop).  
 
 Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the light weight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
 
@@ -38,7 +38,7 @@ pip install --user .
 Then, set a secret key for the Django installation:
 
 ```bash
-sed -i "s/^SECRET_KEY = None$/SECRET_KEY=\"YourSuperSecretAndLongKey"/" server/settings.py
+sed -i "s/^SECRET_KEY = None$/SECRET_KEY='YourSuperSecretAndLongKey'/" server/settings.py
 ```
 
 Next, prepare Django (this creates the database tables)

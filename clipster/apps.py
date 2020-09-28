@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class ClipboardConfig(AppConfig):
+class ClipsterConfig(AppConfig):
     name = "clipster"
