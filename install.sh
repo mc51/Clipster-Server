@@ -41,7 +41,7 @@ if command_exists $PYTHON_EXEC; then
     done
         echo
         echo "OK: Using Python $ver"
-    if command_exists ${PYTHON_EXEC} -m pip; then
+    if ${PYTHON_EXEC} -m pip -V; then
         echo
         echo "OK: Found pip. Ready to install clipster_server python package and requirements"
         echo

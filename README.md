@@ -5,8 +5,10 @@ Copy a text on your smartphone and paste it on your desktop, or vice versa.
 Easy, secure, open source.  
 Supports Android, Linux, MacOS and Windows.  
   
-You can run the server on your own machine. Here is the [Clipster-Desktop Client](https://github.com/mc51/Clipster-Desktop).  
-
+This package allows you to set up your own server.  
+For the mobile client see [Clipster-Android](https://github.com/mc51/Clipster-Android).  
+And here is the [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) client.  
+  
 Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the light weight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
 
 ## Automatic Setup
