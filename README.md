@@ -1,11 +1,11 @@
-# Clipster - Cloud Server
+# Clipster - Linux Cloud Server
 
 Clipster is a multi platform cloud clipboard:  
 Copy a text on your smartphone and paste it on your desktop, or vice versa.  
 Easy, secure, open source.  
 Supports Android, Linux, MacOS and Windows.  
   
-This package allows you to set up your own server.  
+This package allows you to set up your own Linux server.  
 For the mobile client see [Clipster-Android](https://github.com/mc51/Clipster-Android).  
 And here is the [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) client.  
   
