@@ -111,7 +111,16 @@ def worker_abort(worker):
 ```
 
 Replace `<CLIPSTER_SERVER_DIR>` with the current directory.  
-You should always run the server over **HTTPS only**. To configure SSL, replace `<CERTFILE>` with your SSL certification file and `<KEYFILE>` with your SSL private key file.  
+You should always run the server over **HTTPS only** so that the traffic is encrypted. To configure SSL, replace `<CERTFILE>` with your SSL certification file and `<KEYFILE>` with your SSL private key file.  
+If you don't have an SSL certificate yet, you can get a free one at [letsencrypt](https://letsencrypt.org).  
+You can also use a self signed certificate. To create one use:
+
+```bash
+openssl req -newkey rsa -x509 -sha256 -days 3650 -nodes -out clipster-ssl.crt -keyout clipster-ssl.key
+```
+
+**Please note**: When using a self signed certificate, you will need to set your client(s) to disable the SSL certification check. Traffic will still be encrypted. However, you should only set this option when you are using your own server.
+  
 Per default, the server will listen on all interfaces on port 9999. Change the `bind=` line to restrict access, e.g. listen only on your home network. For more options, check the [documentation](https://docs.gunicorn.org/en/stable/configure.html).  
 Then, make the config file executable:
 
