@@ -7,6 +7,7 @@ set -e
 DEFAULT_INTERFACE="0.0.0.0:9999"
 RANDOM_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 PYTHON_EXEC=python3
+BASE_DIR = "$PWD"
 
 command_exists() {
     command -v "$@" > /dev/null 2>&1
@@ -30,6 +31,7 @@ fi
 echo
 echo "INFO: Running as user $USER"
 
+
 if command_exists $PYTHON_EXEC; then
     ver=$(${PYTHON_EXEC} -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
     while [ "$ver" -lt "36" ]; do
@@ -40,10 +42,10 @@ if command_exists $PYTHON_EXEC; then
         ver=$(${PYTHON_EXEC} -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
     done
         echo
-        echo "OK: Using Python $ver"
+        echo "INFO: Using Python $ver"
     if ${PYTHON_EXEC} -m pip -V; then
         echo
-        echo "OK: Found pip. Ready to install clipster_server python package and requirements"
+        echo "INFO: Found pip. Ready to install clipster_server python package and requirements"
         echo
         $PYTHON_EXEC -m pip install --user .
     else
@@ -86,27 +88,46 @@ else
 fi
 
 echo
-echo "INFO: gunicorn must be used via HTTPS only. You will need to specify your SSL certificate files."
-echo "INFO: You can use a self signed certificate or get a free signed one from https://letsencrypt.org/"
+echo "INFO: gunicorn must be used via HTTPS only. You will need to specify your SSL certificate files"
+echo "INFO: You can get a free certificate from https://letsencrypt.org/"
+echo "INFO: You can also create your own self signed certificate"
 echo
-echo
+read -r -p "Do you want to create a self signed certificate now (skip if you already have one) [y/N]: " response
+echo ""
+case "$response" in
+    [yY][eE][sS]|[yY])
+    if command_exists openssl; then
+        echo "INFO: Found openssl. Creating a self signed SSL certificate"
+        echo
+        openssl req -newkey rsa -x509 -sha256 -days 3650 -nodes -out clipster-ssl.crt -keyout clipster-ssl.key
+        CERTFILE="$BASE_DIR/clipster-ssl.crt"
+        KEYFILE="$BASE_DIR/clipster-ssl.key"
+    else
+        echo
+        echo "ERROR: Could not find openssl, which is needed to create a certificate. Make sure to install it"
+        echo "ERROR: Use e.g. on Ubuntu/Debian: sudo apt-get install openssl"
+        exit 1
+    fi
+    ;;
+    *)
+    read -r -p "Enter the absolute path to your SSL cert file [e.g. /etc/letsencrypt/live/data-dive.com/fullchain.pem]:  " CERTFILE
+    while [ ! -f "$CERTFILE" ] || [ -z "$CERTFILE"  ]; do
+        echo "ERROR: File $CERTFILE cannot be accessed. Make sure it exists and is readable "
+        echo
+        read -r -p "Enter the absolute path to your SSL cert file [e.g. /etc/letsencrypt/live/data-dive.com/fullchain.pem]:  " CERTFILE
+    done
+    echo "OK: $CERTFILE can be accessed. We will use it "
+    echo
+    read -r -p "Enter the absolute path to your SSL key file [e.g. /etc/letsencrypt/live/data-dive.com/privkey.pem]:  " KEYFILE
+    while [ ! -f "$KEYFILE" ] || [ -z "$KEYFILE"  ]; do
+        echo "ERROR: File $KEYFILE cannot be accessed. Make sure it exists and is readable "
+        echo
+        read -r -p "Enter the absolute path to your SSL key file [e.g. /etc/letsencrypt/live/data-dive.com/privkey.pem]:  " KEYFILE
+    done
+    echo "OK: $KEYFILE can be accessed. We will use it "
+    ;;
+esac
 
-read -r -p "Enter the absolute path to your SSL cert file [e.g. /etc/letsencrypt/live/data-dive.com/fullchain.pem]:  " CERTFILE
-while [ ! -f "$CERTFILE" ] || [ -z "$CERTFILE"  ]; do
-  echo "ERROR: $CERTFILE cannot be accessed. Make sure it exists and is readable "
-  echo
-  read -r -p "Enter the absolute path to your SSL cert file [e.g. /etc/letsencrypt/live/data-dive.com/fullchain.pem]:  " CERTFILE
-done
-echo "OK: $CERTFILE can be accessed. We will use it "
-
-echo
-read -r -p "Enter the absolute path to your SSL key file [e.g. /etc/letsencrypt/live/data-dive.com/privkey.pem]:  " KEYFILE
-while [ ! -f "$KEYFILE" ] || [ -z "$KEYFILE"  ]; do
-  echo "ERROR: $KEYFILE cannot be accessed. Make sure it exists and is readable "
-  echo
-  read -r -p "Enter the absolute path to your SSL key file [e.g. /etc/letsencrypt/live/data-dive.com/privkey.pem]:  " KEYFILE
-done
-echo "OK: $KEYFILE can be accessed. We will use it "
 
 GUNI_CONFIG_FILE=${PWD}"/guni_clipster.py"
 

@@ -2,15 +2,15 @@ from setuptools import setup
 
 setup(
     name="clipster-server",
-    version="0.1",
+    version="0.1.0",
     description="Multi Platform Cloud Clipboard - Linux Server",
     url="http://github.com/mc51/Clipster-Server",
     author="MC51",
     author_email="mc@data-dive.com",
-    license="GNU GPL v3",
+    license="MIT",
     packages=["clipster"],
     install_requires=["Django", "dj_database_url", "djangorestframework", "gunicorn"],
-    python_requires=">=3.4",
+    python_requires=">=3.6",
     zip_safe=False,
     entry_points={"console_scripts": ["clipster = clipster.clipster:main"]},
     classifiers=[
