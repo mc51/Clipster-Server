@@ -7,7 +7,7 @@ set -e
 DEFAULT_INTERFACE="0.0.0.0:9999"
 RANDOM_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 PYTHON_EXEC=python3
-BASE_DIR = "$PWD"
+BASE_DIR="$PWD"
 
 command_exists() {
     command -v "$@" > /dev/null 2>&1
