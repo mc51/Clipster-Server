@@ -14,12 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.shortcuts import redirect
 from django.contrib import admin
 from clipster import views as cb
 
 urlpatterns = [
+    url(r"^$", lambda req: redirect("/api-auth/login/")),
     url(r"^admin/", admin.site.urls),
-    url(r"^$", cb.ListClip.as_view()),
+    # url(r"^$", cb.ListClip.as_view()),
     url(r"^copy-paste/", cb.CopyPaste.as_view()),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     url(r"^register/", cb.UserRegister.as_view()),

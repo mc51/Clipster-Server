@@ -64,7 +64,9 @@ echo
 # Set a random SECRET KEY for Django
 sed -i "s/^SECRET_KEY = None$/SECRET_KEY=\"${RANDOM_SECRET}\"/" server/settings.py
 # Run Django migrations: Create DB Tables
+$PYTHON_EXEC manage.py makemigrations
 $PYTHON_EXEC manage.py migrate
+$PYTHON_EXEC manage.py collectstatic
 
 if command_exists gunicorn; then
     echo

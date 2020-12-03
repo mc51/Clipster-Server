@@ -46,7 +46,9 @@ sed -i "s/^SECRET_KEY = None$/SECRET_KEY='YourSuperSecretAndLongKey'/" server/se
 Next, prepare Django (this creates the database tables)
 
 ```bash
+python manage.py makemigrations
 python manage.py migrate
+python manage.py collectstatic
 ```
 
 [Gunicorn](https://docs.gunicorn.org/en/latest/) is the WSGCI server that will serve our App. It deals with requests to clipster.  
@@ -186,10 +188,10 @@ If all went fine, you should see:
 Aug 23 20:43:15 ace systemd[1]: Started Clipster Server - A Multi Platform Cloud Clipboard.
 ```
 
-Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) or via browser using the URL `https://yourserver.com:9999`. 
+Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop),  [Clipster-Android](https://github.com/mc51/Clipster-Android) or via browser using the URL `https://yourserver.com:9999`. 
 
 
 ## Credits
 
 Server based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard).  
-Running on [Django](https://www.djangoproject.com/) and served by [Gunicorn](https://gunicorn.org/).
+Running on [Django](https://www.djangoproject.com/) and served by [Gunicorn](https://gunicorn.org/). Static files served by [Whitenoise](http://whitenoise.evans.io/en/stable/).
