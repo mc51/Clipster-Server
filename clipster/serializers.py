@@ -16,6 +16,7 @@ class ClipSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "text", "device")
 
 
+"""
 class UserSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(
@@ -32,9 +33,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "password")
-
-
 """
+
+
 class UserSerializer(serializers.ModelSerializer):
     def create(self, valid_data):
         user = User(username=valid_data["username"])
@@ -45,7 +46,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "password")
-"""
 
 
 @receiver(post_save, sender=User)
