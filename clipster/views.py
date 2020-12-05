@@ -3,12 +3,14 @@ from django.http import Http404
 from clipster.models import Clip
 from clipster.serializers import ClipSerializer, UserSerializer
 from clipster.permissions import IsOwnerOrReadOnly
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import permissions
 from rest_framework.throttling import AnonRateThrottle
 from django.contrib.auth.password_validation import validate_password, ValidationError
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect
+from django.contrib.auth import login, authenticate
 
 
 class ListClip(APIView):
@@ -57,6 +59,29 @@ class CopyPaste(APIView):
         return Response(serializer.data)
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+
+
+def signup(request):
+    """""Register user via web""
+
+    Args:
+        request ([type]): [description]
+
+    Returns:
+        request: Creates html response page
+    """
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get("username")
+            raw_password = form.cleaned_data.get("password1")
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect("/")
+    else:
+        form = UserCreationForm()
+    return render(request, "register.html", {"form": form})
 
 
 class UserRegister(APIView):

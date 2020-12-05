@@ -1,0 +1,23 @@
+{% extends "rest_framework/register_base.html" %}
+{% load static %}
+
+
+{% block title %}Clipster - Register{% endblock %}
+
+{% block banner %}
+<div class="banner">
+    <img src="{% static "images/banner_transparent.png" %}" alt="Clipster banner">
+</div>
+{% endblock %}
+
+{% block branding %}
+<h3 style="margin: 0 0 20px;">Register</h3>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary form-control">Sign up</button>
+</form>
+{% endblock %}

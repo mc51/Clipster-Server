@@ -16,7 +16,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.getenv("CLIPSTER_SECRET")
-SECRET_KEY = None
+# TODO: add git hook to remove SECRET KEY and set DEBUG to false
+SECRET_KEY = "asdfawdasd2131234324e"
 if not SECRET_KEY:
     print(
         "ERROR: You must specify a secret key. Edit server/settings.py and set a key there."
@@ -24,7 +25,7 @@ if not SECRET_KEY:
     sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Add your domain / ip to the allowed hosts
 # "*" allows all !
@@ -54,22 +55,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "server.urls"
-
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
-]
 
 WSGI_APPLICATION = "server.wsgi.application"
 
@@ -113,11 +98,29 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# TODO: We wont need this at first.
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATIC_URL = "/static/"
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "staticfiles")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "staticfiles/")
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(PROJECT_ROOT, "templates/"),
+            os.path.join(PROJECT_ROOT, "templates/", "rest_framework"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
 
 REST_FRAMEWORK = {"DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "30/minute"}}
