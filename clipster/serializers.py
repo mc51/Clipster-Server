@@ -16,27 +16,8 @@ class ClipSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "text", "device")
 
 
-"""
 class UserSerializer(serializers.ModelSerializer):
-
-    username = serializers.CharField(
-        validators=[UniqueValidator(queryset=User.objects.all())]
-    )
-    password = serializers.CharField(min_length=8)
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            validated_data["username"], validated_data["email"],
-        )
-        return user
-
-    class Meta:
-        model = User
-        fields = ("id", "username", "password")
-"""
-
-
-class UserSerializer(serializers.ModelSerializer):
+    # User object: username and hashed password
     def create(self, valid_data):
         user = User(username=valid_data["username"])
         user.set_password(valid_data["password"])

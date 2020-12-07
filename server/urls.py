@@ -19,13 +19,10 @@ from django.contrib import admin
 from clipster import views as cb
 
 urlpatterns = [
-    # url(r"^$", lambda req: redirect("/api-auth/login/")),
     url(r"^admin/", admin.site.urls),
-    url(r"^accounts/profile/", cb.ListClip.as_view()),
-    url(r"^copy-paste/", cb.CopyPaste.as_view()),
+    url(r"^$|^accounts/profile/", cb.ListClip.as_view(), name="list_clips"),
+    url(r"^copy-paste/", cb.CopyPaste.as_view(), name="copy_paste"),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    url(r"^register/", cb.UserRegister.as_view()),
-    url(r"^verify-user/", cb.UserVerify.as_view()),
-    # ---- New web based views
-    #  url(r"^signup/", cb.signup, name="signup"),
+    url(r"^register/", cb.UserRegister.as_view(), name="register"),
+    # url(r"^verify-user/", cb.UserVerify.as_view()
 ]

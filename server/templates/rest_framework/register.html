@@ -1,23 +1,42 @@
-{% extends "rest_framework/register_base.html" %}
+{% extends "rest_framework/base.html" %}
+{% load rest_framework %}
 {% load static %}
 
+{% block title %}
+Clipster - Register Account
+{% endblock %}
 
-{% block title %}Clipster - Register{% endblock %}
+{% block body %}
 
-{% block banner %}
-<div class="banner">
+<body class="container">
+  {% block banner %}
+  <div class="banner">
     <img src="{% static "images/banner_transparent.png" %}" alt="Clipster banner">
-</div>
-{% endblock %}
-
-{% block branding %}
-<h3 style="margin: 0 0 20px;">Register</h3>
-{% endblock %}
-
-{% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary form-control">Sign up</button>
-</form>
+  </div>
+  {% endblock %}
+  <div class="container-fluid" style="margin-top: 30px">
+    <div class="row-fluid">
+      <div class="well" style="width: 320px; margin-left: auto; margin-right: auto">
+        <div class="row-fluid">
+          <div>
+            {% block branding %}<h3 style="margin: 0 0 20px;">Register Account</h3>{% endblock %}
+          </div>
+        </div><!-- /row fluid -->
+        <div class="row-fluid">
+          <div>
+            {% block content %}
+            <form method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit" class="btn btn-primary form-control">Sign up</button>
+            </form>
+            {% endblock %}
+          </div>
+        </div><!-- /.row-fluid -->
+      </div>
+      <!--/.well-->
+    </div><!-- /.row-fluid -->
+    <p style="text-align: center;"><a href="{% url 'rest_framework:login' %}">Already have an account?</a></p>
+  </div><!-- /.container-fluid -->
+</body>
 {% endblock %}
