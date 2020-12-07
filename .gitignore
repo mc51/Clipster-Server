@@ -1,4 +1,4 @@
-staticfiles/
+#staticfiles/
 guni_clipster.py
 *.crt
 *.key
