@@ -318,12 +318,12 @@
       csrfToken: "{% if request %}{{ csrf_token }}{% endif %}"
     };
   </script>
-  <script src="{% static "rest_framework/js/jquery-3.4.1.min.js" %}"></script>
-  <script src="{% static "rest_framework/js/ajax-form.js" %}"></script>
-  <script src="{% static "rest_framework/js/csrf.js" %}"></script>
-  <script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
-  <script src="{% static "rest_framework/js/prettify-min.js" %}"></script>
-  <script src="{% static "rest_framework/js/default.js" %}"></script>
+  <script src="{% static "rest/js/jquery-3.4.1.min.js" %}"></script>
+  <script src="{% static "rest/js/ajax-form.js" %}"></script>
+  <script src="{% static "rest/js/csrf.js" %}"></script>
+  <script src="{% static "rest/js/bootstrap.min.js" %}"></script>
+  <script src="{% static "rest/js/prettify-min.js" %}"></script>
+  <script src="{% static "rest/js/default.js" %}"></script>
   <script>
     $(document).ready(function () {
       $('form').ajaxForm();

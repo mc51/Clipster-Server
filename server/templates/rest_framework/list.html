@@ -1,0 +1,39 @@
+{% extends "rest_framework/base.html" %}
+{% load static %}
+
+{% block title %}Clipster - Your Clips{% endblock %}
+
+{% block branding %}
+<a class='navbar-brand' rel="nofollow">List Clips</a>
+{% endblock %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block content %}
+<div class="banner">
+    <img src="{% static "images/banner_transparent.png" %}" alt="Clipster banner">
+</div>
+Hi {{user}}, here are your Clips:
+<br><br>
+<table style="width: 100%;" class="fixed">
+    <tbody>
+        <col width="70%" />
+        <col width="20%" />
+        <col width="10%" />
+        <tr>
+            <td style="font-size: 120%;"><b>Text</b></td>
+            <td style="font-size: 120%;"><b>Date created</b></td>
+            <td style="font-size: 120%;"><b>Device</b></td>
+        </tr>
+        {% for clip in clips %}
+        <tr>
+            <td>{{ clip.text }}</td>
+            <td>{{ clip.created_at }} </td>
+            <td>{{ clip.device }} </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
