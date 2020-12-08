@@ -24,5 +24,5 @@ urlpatterns = [
     url(r"^copy-paste/", cb.CopyPaste.as_view(), name="copy_paste"),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     url(r"^register/", cb.UserRegister.as_view(), name="register"),
-    url(r"^verify-user/", cb.UserVerify.as_view()
+    url(r"^verify-user/", cb.UserVerify.as_view(), name="verify"),
 ]
