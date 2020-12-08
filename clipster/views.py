@@ -96,7 +96,11 @@ class UserRegister(APIView):
 
 
 class UserVerify(APIView):
-    def get(self, request):
-        return Response(status=status.HTTP_200_OK)
+    """
+    Check if user exists
+    """
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+
+    def get(self, request):
+        return Response(status=status.HTTP_200_OK)
