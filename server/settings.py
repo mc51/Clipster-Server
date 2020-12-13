@@ -15,7 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "asdfawdasd2131234324e"
+SECRET_KEY = "ADASDASD"
 if not SECRET_KEY:
     print(
         "ERROR: You must specify a secret key. Edit server/settings.py and set a key there."
