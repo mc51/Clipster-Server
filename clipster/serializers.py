@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 class ClipSerializer(serializers.ModelSerializer):
     # Using ModelSerializers is just shortcut for Serializers
     # with default create and update
+    # TODO: Limit to n Clips
     user = serializers.ReadOnlyField(source="user.username")
 
     class Meta:

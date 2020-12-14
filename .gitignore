@@ -3,6 +3,7 @@ guni_clipster.py
 *.crt
 *.key
 
+clipster/migrations/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -30,12 +30,9 @@ Hi <b>{{user}}</b>. Here are your shared clips:
         </tr>
         {% for clip in clips %}
         <tr>
-            <!-- <td id="clip_encrypted">{ { clip.text }}</td> -->
             <td>{{ clip.created_at }} </td>
             <td>{{ clip.device }} </td>
-            <td id="clip_encrypted">
-                gAAAAABf1OqbE_3NLO1F_xgzUCwa3lEuPlt6mb3Q7UjsfJOl8QUt-TbwfezimhbxzGqWayIlyyA7QMO3auvF5cI_aRdMC1QGuA==
-            </td>
+            <td id="clip_encrypted">{{ clip.text }}</td>
             <td id="clip_cleartext"></td>
         </tr>
         {% endfor %}
@@ -47,7 +44,7 @@ Hi <b>{{user}}</b>. Here are your shared clips:
     You can decrypt them in your browser below using your password.
     The cleartext is not transmitted and only available to you locally.
 </p>
-<form action="javascript:void(0);" onsubmit="getFormData(event)">
+<form action="javascript:void(0);" onsubmit="listFormData(event)">
     <input type="hidden" name="username" value="{{ user }}">
     <div id="div_id_password" class="clearfix control-group">
         <div class="form-group">
