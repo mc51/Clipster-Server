@@ -14,8 +14,17 @@
 <div class="banner">
     <img src="{% static 'images/banner_transparent.png' %}" alt="Clipster banner">
 </div>
+
+
 Hi <b>{{user}}</b>. Here are your shared clips:
 <br><br>
+<p class="well well-small text-error" id="security_notice_msg">
+    <b>Notice:</b><br>
+    For more security, the clips stored on the server are always encrypted.
+    You can decrypt them below using your password.
+    The cleartext is not transmitted and only available to you locally in the browser.
+</p>
+<br>
 <table style="width: 100%;" class="fixed">
     <tbody>
         <col width="15%" />
@@ -38,27 +47,28 @@ Hi <b>{{user}}</b>. Here are your shared clips:
         {% endfor %}
     </tbody>
 </table><br>
-<p class="well well-small text-error" id="security_notice_msg">
-    <b>Notice:</b><br>
-    For security reasons, the clips stored on the server are always encrypted.
-    You can decrypt them in your browser below using your password.
-    The cleartext is not transmitted and only available to you locally.
-</p>
-<form action="javascript:void(0);" onsubmit="listFormData(event)">
-    <input type="hidden" name="username" value="{{ user }}">
-    <div id="div_id_password" class="clearfix control-group">
-        <div class="form-group">
-            <label for="id_password">Password:</label>
-            <input type="password" name="password" maxlength="100" autocapitalize="off" autocorrect="off"
-                class="form-control textinput textInput" id="id_password" required autofocus>
-        </div>
+
+<div class="container-fluid" style="margin-top: 30px">
+    <div class="well" style="width: 320px; margin-left: auto; margin-right: auto">
+        <form action="javascript:void(0);" onsubmit="decryptClipList(event)">
+            <input type="hidden" name="username" value="{{ user }}">
+            <div id="div_id_password" class="clearfix control-group">
+                <div class="form-group">
+                    <label for="id_password">Password:</label>
+                    <input type="password" name="password" maxlength="100" autocapitalize="off" autocorrect="off"
+                        class="form-control textinput textInput" id="id_password" required autofocus>
+                </div>
+            </div>
+            <p class="well well-small text-error" id="crypto_status_msg" style="display: none;"></p>
+            <div class="form-actions-no-box">
+                <input type="submit" name="submit" value="Decrypt Clips" class="btn btn-primary form-control"
+                    id="submit-id-submit">
+            </div>
+        </form>
     </div>
-    <p class="well well-small text-error" id="crypto_status_msg" style="display: none;"></p>
-    <div class="form-actions-no-box">
-        <input type="submit" name="submit" value="Decrypt Clips" class="btn btn-primary form-control"
-            id="submit-id-submit">
-    </div>
-</form>
+    <p style="text-align: center;"><a href="{% url 'share_clip' %}">Want to share a new clip?</a></p>
+</div>
+
 
 {% endblock %}
 

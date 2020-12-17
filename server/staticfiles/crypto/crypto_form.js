@@ -1,17 +1,49 @@
 /**
  * MC51 - clipster.cc
- * Encrypting and Decrypting Clips on Client Cide
+ * Encrypting and Decrypting Clips on Client side
  */
 
-var HASH_ITERATIONS = 10000;
-var SLEEP_BEFORE_SEND = 5000;
+const HASH_ITERATIONS = 10000;
+const SLEEP_BEFORE_SEND = 5000;
+const API_USER_VERIFY = "/verify-user/";
+
+const isPasswordValid = async (username, password) => {
+    /**
+    * Check credentials against API using HTTPBasicAuth Get Request
+    */
+    var response = await fetch(API_USER_VERIFY, {
+        method: "GET",
+        // Dont send cookies, otherwise this will return 200 as we're logged in already
+        credentials: "omit",
+        headers: {
+            "Authorization": "Basic " + btoa(username + ":" + password)
+        }
+    });
+
+    if (response.ok) {
+        console.log("Authenticated");
+        return true;
+    } else {
+        console.log("Could not authenticate");
+        return false;
+    }
+};
 
 async function shareFormEncrypt(event) {
-    // When sharing clip encrypt first before transmitting to server
-    // event.preventDefault();
+    /**
+     *  When sharing clip encrypt first locally before transmitting to server
+     */
     var username = event.target['username'].value;
     var password = event.target['password'].value;
     var clip_cleartext = event.target['id_text'].value;
+    var valid = await isPasswordValid(username, password); // Wait for async response
+
+    if (!valid) {
+        document.getElementById("share_status_msg").style["display"] = "block";
+        document.getElementById("share_status_msg").style["color"] = "red";
+        document.getElementById("share_status_msg").innerHTML = "Error: Wrong password"
+        return false;
+    }
 
     try {
         var clip_encrypted = encrypt(username, password, clip_cleartext);
@@ -28,17 +60,20 @@ async function shareFormEncrypt(event) {
         return false;
     }
 
-    console.log(clip_cleartext);
-    console.log(clip_encrypted);
-
-    return true;
+    // When all went fine, submit
+    document.forms["share_clip_form"].submit();
 }
 
 
-function listFormData(event) {
-    event.preventDefault();
+function decryptClipList(event) {
+    /**
+     * Get all clips on page and decrypt them
+     */
+
     var username = event.target['username'].value;
     var password = event.target['password'].value;
+    var clips_cleartext = [];
+    var decrypt_errors = false;
 
     var clips_encrypted = Array.prototype.slice.
         call(document.querySelectorAll('#clip_encrypted')).
@@ -46,26 +81,34 @@ function listFormData(event) {
             return a.innerHTML.replace(/ /g, '').replace(/\n/g, '');
         });
 
-    try {
-        var clips_cleartext = decrypt(username, password, clips_encrypted);
-        show_decrypted_clips(clips_cleartext);
-    } catch (e) {
-        // Display error status
-        document.getElementById("crypto_status_msg").style["display"] = "block";
-        document.getElementById("crypto_status_msg").style["color"] = "red";
-        document.getElementById("crypto_status_msg").innerHTML = e;
+    for (i = 0; i < clips_encrypted.length; i++) {
+        try {
+            clips_cleartext[i] = decrypt(username, password, clips_encrypted[i]);
+        } catch (e) {
+            // Display error status
+            clips_cleartext[i] = e;
+            decrypt_errors = true;
+        }
     }
-    console.log(clip_cleartext);
+    show_decrypted_clips(clips_cleartext, decrypt_errors);
 }
 
-function show_decrypted_clips(clips_cleartext) {
+function show_decrypted_clips(clips_cleartext, errors) {
 
-    // Display success status
-    document.getElementById("crypto_status_msg").style["display"] = "block";
-    document.getElementById("crypto_status_msg").style["color"] = "";
-    document.getElementById("crypto_status_msg").innerHTML = "Decrypted successfully";
+    // Display decryption status
+    if (errors) {
+        document.getElementById("crypto_status_msg").style["display"] = "block";
+        document.getElementById("crypto_status_msg").style["color"] = "red";
+        document.getElementById("crypto_status_msg").innerHTML =
+            "Error: Some Clips could not be decrypted. Check your password";
 
-    // Get table cols placeholders
+    } else {
+        document.getElementById("crypto_status_msg").style["display"] = "block";
+        document.getElementById("crypto_status_msg").style["color"] = "";
+        document.getElementById("crypto_status_msg").innerHTML = "OK: Decrypted successfully";
+    }
+
+    // Get table cols placeholders and replace with result
     var clips = Array.prototype.slice.
         call(document.querySelectorAll('#clip_cleartext')).
         map(function (a) {
@@ -75,7 +118,6 @@ function show_decrypted_clips(clips_cleartext) {
     for (i = 0; i < clips.length; i++) {
         clips[i].innerHTML = clips_cleartext[i];
     }
-
 }
 
 
@@ -97,32 +139,25 @@ function encrypt(username, password, clip_cleartext) {
     return encrypted_clip;
 }
 
-function decrypt(username, password, clips_encrypted) {
+function decrypt(username, password, clip_encrypted) {
     /**
-     *  Decrypt the clips on the page using PBKDF2 and Fernet
-     *  return: Array - Ecrypted strings
+     *  Decrypt the clip using PBKDF2 and Fernet
+     *  return: clip_cleartext -  Decrypted string
      */
 
     // PBKDF2 Hash Key creation from SJCL lib
     var salt = "clipster_" + username + "_" + password;
     var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
     var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+    var clip_cleartext;
 
     // Use Key to De-/Encrypt via Fernet lib
     var secret = new fernet.Secret(b64Key);
-
-    let clip_cleartext = []
-    for (var i = 0; i < clips_encrypted.length; i++) {
-
-        clip = clips_encrypted[i];
-        console.log("Decrypting: " + clip);
-        // Decrypt via Fernet
-        var token = new fernet.Token({
-            secret: secret,
-            token: clip,
-            ttl: 0
-        });
-        clip_cleartext[i] = token.decode();
-    }
+    var token = new fernet.Token({
+        secret: secret,
+        token: clip_encrypted,
+        ttl: 0
+    });
+    clip_cleartext = token.decode();
     return clip_cleartext;
 }
