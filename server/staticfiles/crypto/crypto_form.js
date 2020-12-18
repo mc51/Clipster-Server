@@ -39,6 +39,7 @@ async function shareFormEncrypt(event) {
     var valid = await isPasswordValid(username, password); // Wait for async response
 
     if (!valid) {
+        // Password could not be checked, show error message and stop
         document.getElementById("share_status_msg").style["display"] = "block";
         document.getElementById("share_status_msg").style["color"] = "red";
         document.getElementById("share_status_msg").innerHTML = "Error: Wrong password"

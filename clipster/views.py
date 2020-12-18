@@ -2,13 +2,13 @@ from django.shortcuts import redirect
 from django.http import Http404
 from clipster.models import Clip
 from clipster.forms import ShareClipForm
-from clipster.serializers import ClipSerializer
+from clipster.serializers import ClipSerializer, UserSerializer
 from clipster.permissions import IsOwnerOrReadOnly
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 
@@ -19,7 +19,7 @@ class ListClip(APIView):
     """
 
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
-    renderer_classes = [TemplateHTMLRenderer]
+    renderer_classes = [TemplateHTMLRenderer, JSONRenderer]
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -74,7 +74,7 @@ class UserRegister(APIView):
     To register new users.
     """
 
-    renderer_classes = [TemplateHTMLRenderer]
+    renderer_classes = [TemplateHTMLRenderer, JSONRenderer]
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
     def get(self, request):
@@ -84,20 +84,36 @@ class UserRegister(APIView):
         )
 
     def post(self, request):
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect("list_clips")
-        else:
-            return Response(
-                {"error": ["Error"], "form": form},
-                status=status.HTTP_400_BAD_REQUEST,
-                template_name="rest_framework/register.html",
-            )
+        # Handle html and json response differently
+        if request.accepted_renderer.format == "html":
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                username = form.cleaned_data.get("username")
+                raw_password = form.cleaned_data.get("password1")
+                user = authenticate(username=username, password=raw_password)
+                login(request, user)
+                return redirect("list_clips")
+
+            else:
+                return Response(
+                    {"error": ["Error"], "form": form},
+                    status=status.HTTP_400_BAD_REQUEST,
+                    template_name="rest_framework/register.html",
+                )
+        elif request.accepted_renderer.format == "json":
+            try:
+                validate_password(request.data["password"])
+            except ValidationError as e:
+                return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer = UserSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(
+                        serializer.data["username"], status=status.HTTP_201_CREATED
+                    )
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserVerify(APIView):
