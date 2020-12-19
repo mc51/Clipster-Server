@@ -24,7 +24,7 @@ class ListClip(APIView):
 
     def get(self, request):
         if request.user.is_authenticated:
-            clips = Clip.objects.filter(user=self.request.user)
+            clips = Clip.objects.filter(user=request.user)
             serializer = ClipSerializer(clips, many=True)
             if serializer:  # ignore pylint warning
                 pass
@@ -37,32 +37,36 @@ class ListClip(APIView):
             pass
         serializer = ClipSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=self.request.user)  # explicitly specifying user
+            serializer.save(user=request.user)  # explicitly specifying user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CopyPaste(APIView):
     """
-    Update and retrieve the data.
+    Create new Clip or return last Clip
     """
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
-    def post(self, request):
-        clip = Clip(
-            user=request.user, text=request.data["text"], device=request.data["device"]
-        )
+    def get_last_clip(self, user):
+        # Get last clip
         try:
-            clip.save()
-        except Exception as e:
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(request.data["text"])
+            return Clip.objects.filter(user=user).last()
+        except Clip.DoesNotExist:
+            raise Http404
+
+    def post(self, request):
+        # Create new Clip and save
+        serializer = ClipSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        clip = self.get_clip(request.user)
+        clip = self.get_last_clip(request.user)
         serializer = ClipSerializer(clip)
         return Response(serializer.data)
 
