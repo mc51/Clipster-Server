@@ -138,10 +138,12 @@ class ShareClip(APIView):
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
     def get(self, request):
-        form = ShareClipForm()
-        return Response(
-            data={"form": form}, template_name="rest_framework/share_clip.html"
-        )
+        if request.user.is_authenticated:
+            form = ShareClipForm()
+            return Response(
+                data={"form": form}, template_name="rest_framework/share_clip.html"
+            )
+        return redirect("rest_framework:login")
 
     def post(self, request):
         form = ShareClipForm(request.POST)
