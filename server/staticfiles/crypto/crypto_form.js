@@ -29,6 +29,64 @@ const isPasswordValid = async (username, password) => {
     }
 };
 
+function pwToHashRegister(event) {
+    /**
+     * In Register Form hash pw before sending to server
+     * Get PBKDF2 hash for password
+     */
+    var username = event.target['username'].value;
+    var password1 = event.target['password1'].value;
+    var password2 = event.target['password2'].value;
+    var password = password1;
+
+    if (password1 != password2) {
+        console.log("Passwords do not match!")
+        return true;
+    }
+
+    // PBKDF2 Hash Key creation from SJCL lib
+    var salt = "clipster_" + username + "_" + password;
+    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
+    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+
+    console.log("PW Hash: " + b64Key);
+
+    document.getElementById("id_password1").value = b64Key;
+    document.getElementById("id_password2").value = b64Key;
+    return true;
+}
+
+
+function pwToHashLogin(event) {
+    /**
+     * In Login Form hash pw before sending to server
+     * Get PBKDF2 hash for password
+     */
+    var username = event.target['username'].value;
+    var password = event.target['password'].value;
+
+    // PBKDF2 Hash Key creation from SJCL lib
+    var salt = "clipster_" + username + "_" + password;
+    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
+    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+
+    console.log("PW Hash: " + b64Key);
+    document.getElementById("id_password").value = b64Key;
+    return true;
+}
+
+function pwToHash(username, password) {
+    /**
+     * Get PBKDF2 hash for password
+     */
+    var salt = "clipster_" + username + "_" + password;
+    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
+    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+    console.log("PW Hash: " + b64Key);
+    return b64Key;
+}
+
+
 async function shareFormEncrypt(event) {
     /**
      *  When sharing clip encrypt first locally before transmitting to server
@@ -36,6 +94,8 @@ async function shareFormEncrypt(event) {
     var username = event.target['username'].value;
     var password = event.target['password'].value;
     var clip_cleartext = event.target['id_text'].value;
+
+    password = pwToHash(username, password);
     var valid = await isPasswordValid(username, password); // Wait for async response
 
     if (!valid) {
@@ -75,6 +135,8 @@ function decryptClipList(event) {
     var password = event.target['password'].value;
     var clips_cleartext = [];
     var decrypt_errors = false;
+
+    password = pwToHash(username, password);
 
     var clips_encrypted = Array.prototype.slice.
         call(document.querySelectorAll('#clip_encrypted')).

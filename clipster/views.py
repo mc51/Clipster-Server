@@ -11,6 +11,7 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.password_validation import validate_password, ValidationError
 
 
 class ListClip(APIView):
@@ -49,19 +50,16 @@ class CopyPaste(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
-    def get_clip(self, user):
-        try:
-            return Clip.objects.get(user=user)
-        except Clip.DoesNotExist:
-            raise Http404
-
     def post(self, request):
-        clip = self.get_clip(request.user)
-        serializer = ClipSerializer(clip, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        clip = Clip(
+            user=request.user, text=request.data["text"], device=request.data["device"]
+        )
+        try:
+            clip.save()
+        except Exception as e:
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(request.data["text"])
 
     def get(self, request):
         clip = self.get_clip(request.user)
@@ -71,7 +69,8 @@ class CopyPaste(APIView):
 
 class UserRegister(APIView):
     """
-    To register new users.
+    Register new user
+    Respond to html and json requests differently
     """
 
     renderer_classes = [TemplateHTMLRenderer, JSONRenderer]
@@ -94,7 +93,6 @@ class UserRegister(APIView):
                 user = authenticate(username=username, password=raw_password)
                 login(request, user)
                 return redirect("list_clips")
-
             else:
                 return Response(
                     {"error": ["Error"], "form": form},

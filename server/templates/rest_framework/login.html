@@ -24,7 +24,7 @@
 
         <div class="row-fluid">
           <div>
-            <form action="{% url 'rest_framework:login' %}" role="form" method="post">
+            <form action="{% url 'rest_framework:login' %}" onsubmit="return pwToHashLogin(event);" method="post">
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ next }}" />
 
@@ -74,4 +74,11 @@
     <p style="text-align: center;"><a href="{% url 'register' %}">Not yet registered?</a></p>
   </div><!-- /.container-fluid -->
 </body>
+
+{% block script %}
+<script src="{% static 'crypto/crypto_form.js' %}"></script>
+<script src="{% static 'crypto/sjcl.js' %}"></script>
+<script src="{% static 'crypto/fernet.js' %}"></script>
+{% endblock %}
+
 {% endblock %}
