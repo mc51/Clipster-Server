@@ -159,9 +159,9 @@ keyfile = '$KEYFILE'
 ssl_version = 'TLS'
 
 spew = False
-loglevel = 'error'
-accesslog = '/tmp/clipster_access_log'
-errorlog = '/tmp/clipster_error_log'
+loglevel = 'ERROR'
+accesslog = '/tmp/clipster_access.log'
+errorlog = '/tmp/clipster_error.log'
 
 def post_fork(server, worker):
     server.log.info('Worker spawned (pid: %s)', worker.pid)

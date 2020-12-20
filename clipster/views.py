@@ -131,7 +131,7 @@ class UserVerify(APIView):
 
 class ShareClip(APIView):
     """
-    Let user share Clip in Frontend
+    Let user share Clip if authenticated
     """
 
     renderer_classes = [TemplateHTMLRenderer]

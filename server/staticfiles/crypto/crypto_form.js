@@ -3,8 +3,9 @@
  * Encrypting and Decrypting Clips on Client side
  */
 
-const HASH_ITERATIONS = 10000;
-const SLEEP_BEFORE_SEND = 5000;
+const HASH_ITER_LOGIN = 20000;
+const HASH_ITER_MSG = 10000;
+
 const API_USER_VERIFY = "/verify-user/";
 
 const isPasswordValid = async (username, password) => {
@@ -32,7 +33,6 @@ const isPasswordValid = async (username, password) => {
 function pwToHashRegister(event) {
     /**
      * In Register Form hash pw before sending to server
-     * Get PBKDF2 hash for password
      */
     var username = event.target['username'].value;
     var password1 = event.target['password1'].value;
@@ -44,10 +44,7 @@ function pwToHashRegister(event) {
         return true;
     }
 
-    // PBKDF2 Hash Key creation from SJCL lib
-    var salt = "clipster_" + username + "_" + password;
-    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
-    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+    var b64Key = pwToHashForAuth(username, password);
 
     console.log("PW Hash: " + b64Key);
 
@@ -60,28 +57,36 @@ function pwToHashRegister(event) {
 function pwToHashLogin(event) {
     /**
      * In Login Form hash pw before sending to server
-     * Get PBKDF2 hash for password
      */
     var username = event.target['username'].value;
     var password = event.target['password'].value;
 
-    // PBKDF2 Hash Key creation from SJCL lib
-    var salt = "clipster_" + username + "_" + password;
-    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
-    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+    var b64Key = pwToHashForAuth(username, password);
 
     console.log("PW Hash: " + b64Key);
     document.getElementById("id_password").value = b64Key;
     return true;
 }
 
-function pwToHash(username, password) {
+function pwToHashForAuth(username, password) {
     /**
      * Get PBKDF2 hash for password
      */
     var salt = "clipster_" + username + "_" + password;
-    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
-    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITER_LOGIN);
+    var b64Key = sjcl.codec.base64.fromBits(derivedKey, false, true); // with = padding and urlSafe
+    console.log("PW Hash: " + b64Key);
+    return b64Key;
+}
+
+function pwToHashForMsg(username, password) {
+    /**
+     * Get PBKDF2 hash for password
+     */
+    var salt = "clipster_" + username + "_" + password;
+    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITER_MSG);
+    console.log("Derived Key: " + derivedKey);
+    var b64Key = sjcl.codec.base64.fromBits(derivedKey, false, true); // with = padding and urlSafe
     console.log("PW Hash: " + b64Key);
     return b64Key;
 }
@@ -90,13 +95,14 @@ function pwToHash(username, password) {
 async function shareFormEncrypt(event) {
     /**
      *  When sharing clip encrypt first locally before transmitting to server
+     *  Check Login for Hashed PW
      */
     var username = event.target['username'].value;
     var password = event.target['password'].value;
     var clip_cleartext = event.target['id_text'].value;
 
-    password = pwToHash(username, password);
-    var valid = await isPasswordValid(username, password); // Wait for async response
+    pw_login_hash = pwToHashForAuth(username, password);
+    var valid = await isPasswordValid(username, pw_login_hash); // Wait for async response
 
     if (!valid) {
         // Password could not be checked, show error message and stop
@@ -105,7 +111,6 @@ async function shareFormEncrypt(event) {
         document.getElementById("share_status_msg").innerHTML = "Error: Wrong password"
         return false;
     }
-
     try {
         var clip_encrypted = encrypt(username, password, clip_cleartext);
         // Display success status
@@ -135,8 +140,6 @@ function decryptClipList(event) {
     var password = event.target['password'].value;
     var clips_cleartext = [];
     var decrypt_errors = false;
-
-    password = pwToHash(username, password);
 
     var clips_encrypted = Array.prototype.slice.
         call(document.querySelectorAll('#clip_encrypted')).
@@ -190,11 +193,7 @@ function encrypt(username, password, clip_cleartext) {
      * return: String - encrypted clip
      */
 
-    // PBKDF2 Hash Key creation from SJCL lib
-    var salt = "clipster_" + username + "_" + password;
-    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
-    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
-
+    var b64Key = pwToHashForMsg(username, password);
     // Use Key to De-/Encrypt via Fernet lib
     var secret = new fernet.Secret(b64Key);
     var token = new fernet.Token({ secret: secret });
@@ -208,10 +207,7 @@ function decrypt(username, password, clip_encrypted) {
      *  return: clip_cleartext -  Decrypted string
      */
 
-    // PBKDF2 Hash Key creation from SJCL lib
-    var salt = "clipster_" + username + "_" + password;
-    var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITERATIONS);
-    var b64Key = sjcl.codec.base64url.fromBits(derivedKey);
+    var b64Key = pwToHashForMsg(username, password);
     var clip_cleartext;
 
     // Use Key to De-/Encrypt via Fernet lib
