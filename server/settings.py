@@ -14,6 +14,9 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# Clipster - Limit number of Clips per user
+MAX_CLIPS_PER_USER = 5
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = None
 if not SECRET_KEY:
@@ -27,7 +30,7 @@ DEBUG = False
 
 # Add your domain / ip to the allowed hosts
 # "*" allows all !
-ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1", "::1"]
+ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1", "10.0.2.2", "::1"]
 
 # Application definition
 INSTALLED_APPS = [

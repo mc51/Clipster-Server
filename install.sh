@@ -148,10 +148,10 @@ bind = '$INTERFACE'
 backlog = 20
 
 import multiprocessing
-workers = 1
+workers = 3
 worker_class = 'sync'
 worker_connections = 10
-timeout = 300
+timeout = 30
 keepalive = 2
 
 certfile = '$CERTFILE'
@@ -159,9 +159,9 @@ keyfile = '$KEYFILE'
 ssl_version = 'TLS'
 
 spew = False
-loglevel = 'error'
-accesslog = '/tmp/clipster_access_log'
-errorlog = '/tmp/clipster_error_log'
+loglevel = 'ERROR'
+accesslog = '/tmp/clipster_access.log'
+errorlog = '/tmp/clipster_error.log'
 
 def post_fork(server, worker):
     server.log.info('Worker spawned (pid: %s)', worker.pid)

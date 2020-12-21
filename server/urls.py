@@ -25,4 +25,5 @@ urlpatterns = [
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     url(r"^register/", cb.UserRegister.as_view(), name="register"),
     url(r"^verify-user/", cb.UserVerify.as_view(), name="verify"),
+    url(r"^share-clip/", cb.ShareClip.as_view(), name="share_clip"),
 ]

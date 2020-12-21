@@ -1,5 +1,4 @@
 {% extends "rest_framework/base.html" %}
-{% load rest_framework %}
 {% load static %}
 
 {% block title %}
@@ -11,7 +10,7 @@ Clipster - Register Account
 <body class="container">
   {% block banner %}
   <div class="banner">
-    <img src="{% static "images/banner_transparent.png" %}" alt="Clipster banner">
+    <img src="{% static 'images/banner_transparent.png' %}" alt="Clipster banner">
   </div>
   {% endblock %}
   <div class="container-fluid" style="margin-top: 30px">
@@ -25,7 +24,7 @@ Clipster - Register Account
         <div class="row-fluid">
           <div>
             {% block content %}
-            <form method="post">
+            <form method="post" onsubmit="return pwToHashRegister(event);">
               {% csrf_token %}
               {{ form.as_p }}
               <button type="submit" class="btn btn-primary form-control">Sign up</button>
@@ -39,4 +38,11 @@ Clipster - Register Account
     <p style="text-align: center;"><a href="{% url 'rest_framework:login' %}">Already have an account?</a></p>
   </div><!-- /.container-fluid -->
 </body>
+
+{% block script_extra %}
+<script src="{% static 'crypto/crypto_form.js' %}"></script>
+<script src="{% static 'crypto/sjcl.js' %}"></script>
+<script src="{% static 'crypto/fernet.js' %}"></script>
+{% endblock %}
+
 {% endblock %}
