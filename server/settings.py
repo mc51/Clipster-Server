@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAX_CLIPS_PER_USER = 5
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = None
+SECRET_KEY = "sfsdfsdfsdfsdfsdfdsfsdfdsf"
 if not SECRET_KEY:
     print(
         "ERROR: You must specify a secret key. Edit server/settings.py and set a key there."
@@ -26,7 +26,7 @@ if not SECRET_KEY:
     sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Add your domain / ip to the allowed hosts
 # "*" allows all !

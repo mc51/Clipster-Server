@@ -188,7 +188,7 @@ If all went fine, you should see:
 Aug 23 20:43:15 ace systemd[1]: Started Clipster Server - A Multi Platform Cloud Clipboard.
 ```
 
-Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop),  [Clipster-Android](https://github.com/mc51/Clipster-Android) or via browser using the URL `https://yourserver.com:9999`. 
+Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop),  [Clipster-Android](https://github.com/mc51/Clipster-Android) or via browser using the frontend at URL `https://domain.tld:9999`. 
 
 
 ## Credits
