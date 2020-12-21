@@ -5,11 +5,11 @@ Copy a text on your smartphone and paste it on your desktop, or vice versa.
 Easy, secure, open source.  
 Supports Android, Linux, MacOS and Windows.  
   
-This package allows you to set up your own Linux server including a front-end.  
+This package allows you to set up your own Linux server including a web front-end.  
 For the mobile client see [Clipster-Android](https://github.com/mc51/Clipster-Android).  
-And here is the [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop) client.  
+For a client for Linux, Windows and MacOS check [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop).  
   
-Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the light weight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
+Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the lightweight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
 
 ## Automatic Setup
 
@@ -25,7 +25,7 @@ Then, just run the install script:
 sh install.sh
 ```
 
-The install script takes care of everything.  
+The install script takes care of everything. Per default, the server accepts connections at https://domain.tld:9999. There, it also serves the front end.  
 
 ## Manual Setup
   

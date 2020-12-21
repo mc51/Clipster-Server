@@ -148,10 +148,10 @@ bind = '$INTERFACE'
 backlog = 20
 
 import multiprocessing
-workers = 1
+workers = 3
 worker_class = 'sync'
 worker_connections = 10
-timeout = 300
+timeout = 30
 keepalive = 2
 
 certfile = '$CERTFILE'
