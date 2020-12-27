@@ -8,8 +8,6 @@ Supports Android, Linux, MacOS and Windows.
 This package allows you to set up your own Linux server including a web front-end.  
 For the mobile client see [Clipster-Android](https://github.com/mc51/Clipster-Android).  
 For a client for Linux, Windows and MacOS check [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop).  
-  
-Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the lightweight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. 
 
 ## Automatic Setup
 
@@ -188,10 +186,9 @@ If all went fine, you should see:
 Aug 23 20:43:15 ace systemd[1]: Started Clipster Server - A Multi Platform Cloud Clipboard.
 ```
 
-Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop),  [Clipster-Android](https://github.com/mc51/Clipster-Android) or via browser using the frontend at URL `https://domain.tld:9999`. 
+Now, you should be able to connect to your server with [Clipster-Desktop](https://github.com/mc51/Clipster-Desktop),  [Clipster-Android](https://github.com/mc51/Clipster-Android) or via browser using the front-end at URL `https://domain.tld:9999`. 
 
 
 ## Credits
-
-Server based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard).  
-Running on [Django](https://www.djangoproject.com/) and served by [Gunicorn](https://gunicorn.org/). Static files served by [Whitenoise](http://whitenoise.evans.io/en/stable/).
+  
+Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the lightweight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. Static files are served by [Whitenoise](http://whitenoise.evans.io/en/stable/).

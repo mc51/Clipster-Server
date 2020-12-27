@@ -26,9 +26,9 @@ class ListClip(APIView):
         if request.user.is_authenticated:
             clips = Clip.objects.filter(user=request.user)
             serializer = ClipSerializer(clips, many=True)
-            if serializer:  # ignore pylint warning
-                pass
-            return Response({"clips": clips}, template_name="rest_framework/list.html")
+            return Response(
+                {"clips": serializer.data}, template_name="rest_framework/list.html"
+            )
         return redirect("rest_framework:login")
 
     def post(self, request):
@@ -57,6 +57,13 @@ class CopyPaste(APIView):
         except Clip.DoesNotExist:
             raise Http404
 
+    def get_clips(self, user):
+        # Get all clips
+        try:
+            return Clip.objects.filter(user=user)
+        except Clip.DoesNotExist:
+            raise Http404
+
     def post(self, request):
         # Create new Clip and save
         serializer = ClipSerializer(data=request.data)
@@ -66,8 +73,8 @@ class CopyPaste(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        clip = self.get_last_clip(request.user)
-        serializer = ClipSerializer(clip)
+        clips = self.get_clips(request.user)
+        serializer = ClipSerializer(clips, many=True)
         return Response(serializer.data)
 
 

@@ -8,7 +8,7 @@ class Clip(models.Model):
     device = models.CharField(max_length=100, blank=True, default="unspecified")
 
     def __str__(self):
-        return f"User: {self.user} Text: {self.text} Created at: {self.created_at} Device: {self.device}"
+        return f"user: {self.user} text: {self.text} created at: {self.created_at} device: {self.device}"
 
     class Meta:
         ordering = ("created_at",)
