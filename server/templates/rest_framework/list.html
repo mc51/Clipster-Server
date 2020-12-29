@@ -25,18 +25,17 @@ Hi <b>{{user}}</b>. Here are your shared clips:
     The cleartext is not transmitted and only available to you locally in the browser.
 </p>
 <br>
-<table style="width: 100%;" class="fixed">
-    <tbody>
-        <col width="15%" />
-        <col width="15%" />
-        <col width="35%" />
-        <col width="35%" />
+
+<table class="list_clips">
+    <thead>
         <tr>
-            <td style="font-size: 120%;"><b>Date created</b></td>
-            <td style="font-size: 120%;"><b>Device</b></td>
-            <td style="font-size: 120%;"><b>Clip (Encrypted)</b></td>
-            <td style="font-size: 120%;"><b>Clip (Cleartext)</b></td>
+            <th style="font-size: 120%;width: 20%;"><b>Date created</b></td>
+            <th style="font-size: 120%;width: 10%;"><b>Device</b></td>
+            <th style="font-size: 120%;width: 35%;"><b>Clip (Encrypted)</b></td>
+            <th style="font-size: 120%;width: 35%;"><b>Clip (Cleartext)</b></td>
         </tr>
+    </thead>
+    <tbody>
         {% for clip in clips %}
         <tr>
             <td>{{ clip.created_at }} </td>
@@ -46,8 +45,9 @@ Hi <b>{{user}}</b>. Here are your shared clips:
         </tr>
         {% endfor %}
     </tbody>
-</table><br>
+</table>
 
+<br>
 <div class="container-fluid" style="margin-top: 30px">
     <div class="well" style="width: 320px; margin-left: auto; margin-right: auto">
         <form action="javascript:void(0);" onsubmit="decryptClipList(event)">

@@ -17,6 +17,25 @@ a single block in the template.
   height: 120px;
 }
 
+.list_clips {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.list_clips #clip_encrypted {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list_clips #clip_cleartext {
+  overflow: auto;
+  text-overflow: ellipsis;
+}
+
+
+
+
 #generic-content-form textarea {
   font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
   font-size: 80%;
