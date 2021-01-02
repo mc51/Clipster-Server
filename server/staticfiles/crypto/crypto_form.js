@@ -5,6 +5,7 @@
 
 const HASH_ITER_LOGIN = 20000;
 const HASH_ITER_MSG = 10000;
+const MIN_PW_LENGTH = 8;
 
 const API_USER_VERIFY = "/verify-user/";
 
@@ -41,6 +42,11 @@ function pwToHashRegister(event) {
 
     if (password1 != password2) {
         console.log("Passwords do not match!")
+        return true;
+    }
+
+    if (password1.length < MIN_PW_LENGTH) {
+        console.log("Password is too short!")
         return true;
     }
 

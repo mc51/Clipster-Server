@@ -44,28 +44,20 @@ class ListClip(APIView):
 
 class CopyPaste(APIView):
     """
-    Create new Clip or return last Clip
+    Create new Clip or return all Clips
     """
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
-    def get_last_clip(self, user):
-        # Get last clip
-        try:
-            return Clip.objects.filter(user=user).last()
-        except Clip.DoesNotExist:
-            raise Http404
-
-    def get_clips(self, user):
-        # Get all clips
+    def get_all_clips(self, user):
         try:
             return Clip.objects.filter(user=user)
         except Clip.DoesNotExist:
             raise Http404
 
     def post(self, request):
-        # Create new Clip and save
+        # Create new Clip and save if valid
         serializer = ClipSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -73,7 +65,7 @@ class CopyPaste(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        clips = self.get_clips(request.user)
+        clips = self.get_all_clips(request.user)
         serializer = ClipSerializer(clips, many=True)
         return Response(serializer.data)
 
@@ -103,7 +95,7 @@ class UserRegister(APIView):
                 raw_password = form.cleaned_data.get("password1")
                 user = authenticate(username=username, password=raw_password)
                 login(request, user)
-                return redirect("list_clips")
+                return redirect("list_clips_frontend")
             else:
                 return Response(
                     {"error": ["Error"], "form": form},
@@ -156,7 +148,7 @@ class ShareClip(APIView):
         form = ShareClipForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("list_clips")
+            return redirect("list_clips_frontend")
         else:
             return Response(
                 {"error": ["Error"], "form": form},

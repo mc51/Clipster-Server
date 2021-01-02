@@ -20,10 +20,10 @@ from clipster import views as cb
 
 urlpatterns = [
     url(r"^admin/", admin.site.urls),
-    url(r"^$|^accounts/profile/", cb.ListClip.as_view(), name="list_clips"),
-    url(r"^copy-paste/", cb.CopyPaste.as_view(), name="copy_paste"),
+    url(r"^$|^accounts/profile/", cb.ListClip.as_view(), name="list_clips_frontend"),
+    url(r"^share-clip/", cb.ShareClip.as_view(), name="share_clip"),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    url(r"^copy-paste/", cb.CopyPaste.as_view(), name="copy_paste"),
     url(r"^register/", cb.UserRegister.as_view(), name="register"),
     url(r"^verify-user/", cb.UserVerify.as_view(), name="verify"),
-    url(r"^share-clip/", cb.ShareClip.as_view(), name="share_clip"),
 ]
