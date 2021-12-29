@@ -2,7 +2,8 @@
 guni_clipster.py
 *.crt
 *.key
-server/staticfiles/crypto/core
+server/staticfiles/
+*.pid
 
 clipster/migrations/*
 # Byte-compiled / optimized / DLL files
