@@ -26,7 +26,7 @@ if not SECRET_KEY:
     sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False 
 
 # Add your domain / ip to the allowed hosts
 # "*" allows all !

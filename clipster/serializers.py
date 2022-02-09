@@ -14,7 +14,7 @@ class ClipSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Clip
-        fields = ("id", "user", "text", "device", "created_at")
+        fields = ("id", "user", "format", "text", "device", "created_at")
 
 
 class UserSerializer(serializers.ModelSerializer):
