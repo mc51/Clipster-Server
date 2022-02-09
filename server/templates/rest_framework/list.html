@@ -40,7 +40,7 @@ Hi <b>{{user}}</b>. Here are your shared clips:
         <tr>
             <td>{{ clip.created_at }} </td>
             <td>{{ clip.device }} </td>
-            <td id="clip_encrypted">{{ clip.text }}</td>
+            <td id="clip_encrypted" class="{{ clip.format }}">{{ clip.text }}</td>
             <td id="clip_cleartext"></td>
         </tr>
         {% endfor %}

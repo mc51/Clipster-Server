@@ -153,6 +153,13 @@ function decryptClipList(event) {
             return a.innerHTML.replace(/ /g, '').replace(/\n/g, '');
         });
 
+    // get format info from class parameter's value
+    var clips_format = Array.prototype.slice.
+        call(document.querySelectorAll('#clip_encrypted')).
+        map(function (a) {
+            return a.className;
+        });
+
     for (i = 0; i < clips_encrypted.length; i++) {
         try {
             clips_cleartext[i] = decrypt(username, password, clips_encrypted[i]);
@@ -162,10 +169,10 @@ function decryptClipList(event) {
             decrypt_errors = true;
         }
     }
-    show_decrypted_clips(clips_cleartext, decrypt_errors);
+    show_decrypted_clips(clips_cleartext, clips_format, decrypt_errors);
 }
 
-function show_decrypted_clips(clips_cleartext, errors) {
+function show_decrypted_clips(clips_cleartext, clips_format, errors) {
 
     // Display decryption status
     if (errors) {
@@ -188,7 +195,13 @@ function show_decrypted_clips(clips_cleartext, errors) {
         });
 
     for (i = 0; i < clips.length; i++) {
-        clips[i].innerHTML = clips_cleartext[i];
+        if (clips_format[i] == "img") {
+            // display image
+            clips[i].innerHTML = '<img class="thumb" src="data:image/png;base64,' + clips_cleartext[i] + '"></img>'
+        } else {
+            clips[i].innerHTML = clips_cleartext[i];
+        }
+
     }
 }
 

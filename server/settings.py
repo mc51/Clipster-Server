@@ -16,6 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Clipster - Limit number of Clips per user
 MAX_CLIPS_PER_USER = 5
+MAX_CLIP_LENGTH = 5 * 1024 * 1024 * 1.4  # 5MB + b64 overhead
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "sfsdfsdfsdfsdfsdfdsfsdfdsf"
@@ -26,7 +27,7 @@ if not SECRET_KEY:
     sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False 
+DEBUG = False
 
 # Add your domain / ip to the allowed hosts
 # "*" allows all !
@@ -80,7 +81,9 @@ AUTH_PASSWORD_VALIDATORS = [
     # {
     #     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     # },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
     # {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     # {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
