@@ -29,6 +29,7 @@
             <input type="hidden" id="id_user" name="user" value="{{ user.id }}">
             <input type="hidden" id="id_username" name="username" value="{{ user }}">
             <input type="hidden" id="id_device" name="device" value="web_frontend">
+            <input type="hidden" id="id_format" name="format" value="txt">
             <div id="div_id_password" class="clearfix control-group">
                 <div class="form-group">
                     <label for="id_password">Password:</label>
@@ -39,6 +40,8 @@
                         {{ form.user.errors|striptags }}
                     </p>
                     {% endif %}
+                    <label for="fileupload">Image:</label>
+                    <input id="fileupload" type="file" onchange="encodeFileToBase64(this)" />
                     <label for="id_text">Clip:</label>
                     <textarea id="id_text" name="text" class="text-share-clip" autocapitalize="off" autocorrect="off"
                         class="form-control textinput textInput" required></textarea>

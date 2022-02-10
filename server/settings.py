@@ -19,12 +19,14 @@ MAX_CLIPS_PER_USER = 5
 MAX_CLIP_LENGTH = 5 * 1024 * 1024 * 1.4  # 5MB + b64 overhead
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "sfsdfsdfsdfsdfsdfdsfsdfdsf"
+SECRET_KEY = None
 if not SECRET_KEY:
-    print(
-        "ERROR: You must specify a secret key. Edit server/settings.py and set a key there."
-    )
-    sys.exit(1)
+    if not (SECRET_KEY := os.getenv("SECRET_KEY")):
+        print(
+            "ERROR: You must specify a secret key. Edit server/settings.py "
+            "or set a SECRET_KEY environment variable."
+        )
+        sys.exit(1)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

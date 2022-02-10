@@ -239,3 +239,19 @@ function decrypt(username, password, clip_encrypted) {
     clip_cleartext = token.decode();
     return clip_cleartext;
 }
+
+function encodeFileToBase64(elm) {
+    /**
+     *  On Image choice convert file to b64 string and add it to text
+     *  Also set format to img
+     */
+
+    var file = elm.files[0];
+    var imgReader = new FileReader();
+    imgReader.onloadend = function () {
+        console.log('Base64 Format', imgReader.result);
+        document.getElementById("id_format").value = "img";
+        document.getElementById("id_text").value = imgReader.result.replace(/^data:.+;base64,/, '');;
+    }
+    imgReader.readAsDataURL(file);
+}
