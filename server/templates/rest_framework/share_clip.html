@@ -42,7 +42,6 @@
                     {% endif %}
                     <label for="fileupload">Image:</label>
                     <input id="fileupload" type="file" onchange="encodeFileToBase64(this)" />
-                    <button onclick="resetForm()">Reset</button>
                     <label for="id_text">Clip:</label>
                     <textarea id="id_text" name="text" class="text-share-clip" autocapitalize="off" autocorrect="off"
                         class="form-control textinput textInput" required></textarea>
@@ -55,6 +54,8 @@
             {% endif %}
             <p class="well well-small text-error" id="share_status_msg" style="display: none;"></p>
             <div class="form-actions-no-box">
+                <input onclick="resetForm()" type="submit" name="reset_btn" value="Reset"
+                    class="btn btn-primary form-control" id="id_reset">
                 <input type="submit" name="submit_btn" value="Encrypt and share clip"
                     class="btn btn-primary form-control" id="submit-id-submit">
             </div>

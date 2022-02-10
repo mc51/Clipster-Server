@@ -251,7 +251,6 @@ function encodeFileToBase64(elm) {
         // console.log('Base64 Format', imgReader.result);
         document.getElementById("id_format").value = "img";
         document.getElementById("id_text").value = imgReader.result.replace(/^data:.+;base64,/, '');
-        // document.getElementById("id_text").disabled = true  // doesnt get transmitted
         document.getElementById("id_text").setAttribute('readonly', true);
 
         // status
@@ -263,12 +262,11 @@ function encodeFileToBase64(elm) {
 }
 
 function resetForm() {
-    /**
-     *  Reset all Inputs in Form
-     */
+    // Reset all Inputs in Form to default
     console.log("Resetting form")
     document.getElementById("id_format").value = "txt";
     document.getElementById("fileupload").value = '';
     document.getElementById("id_text").value = '';
     document.getElementById("id_text").removeAttribute('readonly');
+    document.getElementById("share_status_msg").innerHTML = "";
 }
