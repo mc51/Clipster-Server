@@ -42,6 +42,7 @@
                     {% endif %}
                     <label for="fileupload">Image:</label>
                     <input id="fileupload" type="file" onchange="encodeFileToBase64(this)" />
+                    <button onclick="resetForm()">Reset</button>
                     <label for="id_text">Clip:</label>
                     <textarea id="id_text" name="text" class="text-share-clip" autocapitalize="off" autocorrect="off"
                         class="form-control textinput textInput" required></textarea>

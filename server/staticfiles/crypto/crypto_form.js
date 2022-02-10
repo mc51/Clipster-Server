@@ -245,13 +245,30 @@ function encodeFileToBase64(elm) {
      *  On Image choice convert file to b64 string and add it to text
      *  Also set format to img
      */
-
     var file = elm.files[0];
     var imgReader = new FileReader();
     imgReader.onloadend = function () {
-        console.log('Base64 Format', imgReader.result);
+        // console.log('Base64 Format', imgReader.result);
         document.getElementById("id_format").value = "img";
-        document.getElementById("id_text").value = imgReader.result.replace(/^data:.+;base64,/, '');;
+        document.getElementById("id_text").value = imgReader.result.replace(/^data:.+;base64,/, '');
+        // document.getElementById("id_text").disabled = true  // doesnt get transmitted
+        document.getElementById("id_text").setAttribute('readonly', true);
+
+        // status
+        document.getElementById("share_status_msg").style["display"] = "block";
+        document.getElementById("share_status_msg").style["color"] = "";
+        document.getElementById("share_status_msg").innerHTML = "Image added as Clip!";
     }
     imgReader.readAsDataURL(file);
+}
+
+function resetForm() {
+    /**
+     *  Reset all Inputs in Form
+     */
+    console.log("Resetting form")
+    document.getElementById("id_format").value = "txt";
+    document.getElementById("fileupload").value = '';
+    document.getElementById("id_text").value = '';
+    document.getElementById("id_text").removeAttribute('readonly');
 }
