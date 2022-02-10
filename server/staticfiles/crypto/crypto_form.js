@@ -269,4 +269,5 @@ function resetForm() {
     document.getElementById("id_text").value = '';
     document.getElementById("id_text").removeAttribute('readonly');
     document.getElementById("share_status_msg").innerHTML = "";
+    document.getElementById("share_status_msg").style["display"] = "none";
 }

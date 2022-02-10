@@ -40,8 +40,10 @@
                         {{ form.user.errors|striptags }}
                     </p>
                     {% endif %}
+                    <br>
                     <label for="fileupload">Image:</label>
                     <input id="fileupload" type="file" onchange="encodeFileToBase64(this)" />
+                    <br>
                     <label for="id_text">Clip:</label>
                     <textarea id="id_text" name="text" class="text-share-clip" autocapitalize="off" autocorrect="off"
                         class="form-control textinput textInput" required></textarea>
@@ -56,6 +58,8 @@
             <div class="form-actions-no-box">
                 <input onclick="resetForm()" type="submit" name="reset_btn" value="Reset"
                     class="btn btn-primary form-control" id="id_reset">
+            </div>
+            <div class="form-actions-no-box">
                 <input type="submit" name="submit_btn" value="Encrypt and share clip"
                     class="btn btn-primary form-control" id="submit-id-submit">
             </div>
