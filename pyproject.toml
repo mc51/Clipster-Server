@@ -6,7 +6,7 @@ authors = [
     { name = "MC51", email = "mc@data-dive.com" }
 ]
 dependencies = [
-    "Django==4.0",
+    "Django==4.1.13",
     "dj_database_url==2.1.0",
     "djangorestframework==3.13.1",
     "gunicorn==21.2.0",
