@@ -5,4 +5,4 @@ from clipster.models import Clip
 class ShareClipForm(ModelForm):
     class Meta:
         model = Clip
-        fields = ["device", "user", "text"]
+        fields = ["device", "user", "format", "text"]

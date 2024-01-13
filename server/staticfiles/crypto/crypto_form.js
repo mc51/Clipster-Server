@@ -153,6 +153,13 @@ function decryptClipList(event) {
             return a.innerHTML.replace(/ /g, '').replace(/\n/g, '');
         });
 
+    // get format info from class parameter's value
+    var clips_format = Array.prototype.slice.
+        call(document.querySelectorAll('#clip_encrypted')).
+        map(function (a) {
+            return a.className;
+        });
+
     for (i = 0; i < clips_encrypted.length; i++) {
         try {
             clips_cleartext[i] = decrypt(username, password, clips_encrypted[i]);
@@ -162,10 +169,10 @@ function decryptClipList(event) {
             decrypt_errors = true;
         }
     }
-    show_decrypted_clips(clips_cleartext, decrypt_errors);
+    show_decrypted_clips(clips_cleartext, clips_format, decrypt_errors);
 }
 
-function show_decrypted_clips(clips_cleartext, errors) {
+function show_decrypted_clips(clips_cleartext, clips_format, errors) {
 
     // Display decryption status
     if (errors) {
@@ -188,7 +195,13 @@ function show_decrypted_clips(clips_cleartext, errors) {
         });
 
     for (i = 0; i < clips.length; i++) {
-        clips[i].innerHTML = clips_cleartext[i];
+        if (clips_format[i] == "img") {
+            // display image
+            clips[i].innerHTML = '<img class="thumb" src="data:image/png;base64,' + clips_cleartext[i] + '"></img>'
+        } else {
+            clips[i].innerHTML = clips_cleartext[i];
+        }
+
     }
 }
 
@@ -225,4 +238,36 @@ function decrypt(username, password, clip_encrypted) {
     });
     clip_cleartext = token.decode();
     return clip_cleartext;
+}
+
+function encodeFileToBase64(elm) {
+    /**
+     *  On Image choice convert file to b64 string and add it to text
+     *  Also set format to img
+     */
+    var file = elm.files[0];
+    var imgReader = new FileReader();
+    imgReader.onloadend = function () {
+        // console.log('Base64 Format', imgReader.result);
+        document.getElementById("id_format").value = "img";
+        document.getElementById("id_text").value = imgReader.result.replace(/^data:.+;base64,/, '');
+        document.getElementById("id_text").setAttribute('readonly', true);
+
+        // status
+        document.getElementById("share_status_msg").style["display"] = "block";
+        document.getElementById("share_status_msg").style["color"] = "";
+        document.getElementById("share_status_msg").innerHTML = "Image added as Clip!";
+    }
+    imgReader.readAsDataURL(file);
+}
+
+function resetForm() {
+    // Reset all Inputs in Form to default
+    console.log("Resetting form")
+    document.getElementById("id_format").value = "txt";
+    document.getElementById("fileupload").value = '';
+    document.getElementById("id_text").value = '';
+    document.getElementById("id_text").removeAttribute('readonly');
+    document.getElementById("share_status_msg").innerHTML = "";
+    document.getElementById("share_status_msg").style["display"] = "none";
 }
