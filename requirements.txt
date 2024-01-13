@@ -1,5 +1,0 @@
-Django
-dj_database_url
-djangorestframework
-gunicorn
-whitenoise
