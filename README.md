@@ -53,8 +53,11 @@ sudo systemctl disable --now clipster_server
 sudo rm /etc/systemd/system/clipster_server.service
 cp /path/to/old/Clipster-Server/db.sqlite3 data/db.sqlite3
 grep SECRET_KEY /path/to/old/Clipster-Server/server/settings.py  # copy the value into .env
+docker compose run --rm clipster python manage.py migrate clipster --fake
 docker compose up -d
 ```
+
+The `--fake` step is needed because the old install script generated its own migration files. They are named differently from the ones in this repo, although the resulting database tables are the same.
 
 The container runs as user id 1000. If your user has a different id, run `sudo chown -R 1000:1000 data`.  
 Note that clients previously connected to `https://<domain>:9999`. With the built-in Caddy setup the address is `https://<domain>` now.

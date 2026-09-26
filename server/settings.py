@@ -23,11 +23,11 @@ def env_list(name, default=""):
 MAX_CLIPS_PER_USER = 5
 MAX_CLIP_LENGTH = 5 * 1024 * 1024 * 1.4  # 5MB + b64 overhead
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = None
 if not SECRET_KEY:
     raise ImproperlyConfigured("The SECRET_KEY environment variable must be set.")
 
-DEBUG = os.getenv("DEBUG", "false").lower() in ("1", "true", "yes")
+DEBUG = False
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "*")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
