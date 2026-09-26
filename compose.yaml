@@ -1,0 +1,32 @@
+services:
+  clipster:
+    build: .
+    image: clipster-server
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${BIND:-127.0.0.1:9999}:8000"
+    volumes:
+      - ./data:/data
+
+  # Optional HTTPS reverse proxy with automatic Let's Encrypt certificates.
+  # Enable with COMPOSE_PROFILES=caddy in .env
+  caddy:
+    image: caddy:2
+    profiles: [caddy]
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - clipster
+
+volumes:
+  caddy_data:
+  caddy_config:
