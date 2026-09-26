@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+.env
+__pycache__
+*.egg-info
+build
+dist
+data
+staticfiles
+db.sqlite3
+*.crt
+*.key

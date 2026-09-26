@@ -1,0 +1,3 @@
+{$DOMAIN} {
+	reverse_proxy clipster:8000
+}
