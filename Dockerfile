@@ -20,4 +20,7 @@ RUN useradd --uid 1000 --no-create-home app && mkdir -p /data && chown app:app /
 USER app
 
 EXPOSE 8000
+# start-period covers the migrations that run before gunicorn starts
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD ["python", "healthcheck.py"]
 CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn server.wsgi"]
