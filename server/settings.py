@@ -23,14 +23,19 @@ def env_list(name, default=""):
 MAX_CLIPS_PER_USER = 5
 MAX_CLIP_LENGTH = 5 * 1024 * 1024 * 1.4  # 5MB + b64 overhead
 
-SECRET_KEY = None
+SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise ImproperlyConfigured("The SECRET_KEY environment variable must be set.")
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "false").lower() in ("1", "true", "yes")
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "*")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
+
+# The server must only be reached via HTTPS, see README
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 365 * 24 * 60 * 60
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -66,8 +71,21 @@ DATABASES = {
 # Existing migrations use 32 bit primary keys, Django >= 6.0 defaults to 64 bit
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
+AUTHENTICATION_BACKENDS = ["clipster.backends.LoginThrottleBackend"]
+# Failed logins allowed per client within the window (seconds), for all login paths
+LOGIN_FAILURE_LIMIT = 5
+LOGIN_FAILURE_WINDOW = 60
+
+# Clients only ever send a 44 character PBKDF2 hash of the password, which always passes.
+# So these only apply to cleartext passwords set via createsuperuser or the admin.
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 12},
+    },
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 LANGUAGE_CODE = "en-us"
@@ -102,4 +120,8 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": os.getenv("LOG_LEVEL", "WARNING")},
 }
 
-REST_FRAMEWORK = {"DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "30/minute"}}
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "30/minute"},
+    # Number of reverse proxies in front of the app, used to find the client IP for throttling
+    "NUM_PROXIES": int(os.getenv("NUM_PROXIES", "1")),
+}

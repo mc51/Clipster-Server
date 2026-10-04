@@ -40,19 +40,18 @@ function pwToHashRegister(event) {
     var password2 = event.target['password2'].value;
     var password = password1;
 
+    // The server only sees the hash and can't check these, never submit the cleartext password
     if (password1 != password2) {
-        console.log("Passwords do not match!")
-        return true;
+        alert("Passwords do not match!");
+        return false;
     }
 
     if (password1.length < MIN_PW_LENGTH) {
-        console.log("Password is too short!")
-        return true;
+        alert("Password is too short! It must contain at least " + MIN_PW_LENGTH + " characters.");
+        return false;
     }
 
     var b64Key = pwToHashForAuth(username, password);
-
-    console.log("PW Hash: " + b64Key);
 
     document.getElementById("id_password1").value = b64Key;
     document.getElementById("id_password2").value = b64Key;
@@ -69,7 +68,6 @@ function pwToHashLogin(event) {
 
     var b64Key = pwToHashForAuth(username, password);
 
-    console.log("PW Hash: " + b64Key);
     document.getElementById("id_password").value = b64Key;
     return true;
 }
@@ -81,7 +79,6 @@ function pwToHashForAuth(username, password) {
     var salt = "clipster_" + username + "_" + password;
     var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITER_LOGIN);
     var b64Key = sjcl.codec.base64.fromBits(derivedKey, false, true); // with = padding and urlSafe
-    console.log("PW Hash: " + b64Key);
     return b64Key;
 }
 
@@ -91,9 +88,7 @@ function pwToHashForMsg(username, password) {
      */
     var salt = "clipster_" + username + "_" + password;
     var derivedKey = sjcl.misc.pbkdf2(password, salt, HASH_ITER_MSG);
-    console.log("Derived Key: " + derivedKey);
     var b64Key = sjcl.codec.base64.fromBits(derivedKey, false, true); // with = padding and urlSafe
-    console.log("PW Hash: " + b64Key);
     return b64Key;
 }
 
@@ -128,7 +123,7 @@ async function shareFormEncrypt(event) {
         // Display error status
         document.getElementById("share_status_msg").style["display"] = "block";
         document.getElementById("share_status_msg").style["color"] = "red";
-        document.getElementById("share_status_msg").innerHTML = e;
+        document.getElementById("share_status_msg").textContent = e;
         return false;
     }
 
@@ -195,11 +190,14 @@ function show_decrypted_clips(clips_cleartext, clips_format, errors) {
         });
 
     for (i = 0; i < clips.length; i++) {
+        // Clip contents are untrusted (any copied text), never insert them as HTML
         if (clips_format[i] == "img") {
-            // display image
-            clips[i].innerHTML = '<img class="thumb" src="data:image/png;base64,' + clips_cleartext[i] + '"></img>'
+            var img = document.createElement("img");
+            img.className = "thumb";
+            img.src = "data:image/png;base64," + clips_cleartext[i];
+            clips[i].replaceChildren(img);
         } else {
-            clips[i].innerHTML = clips_cleartext[i];
+            clips[i].textContent = clips_cleartext[i];
         }
 
     }
