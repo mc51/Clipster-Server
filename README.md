@@ -52,7 +52,7 @@ Do a fresh clone as described above, then stop the old service and take over its
 sudo systemctl disable --now clipster_server
 sudo rm /etc/systemd/system/clipster_server.service
 cp /path/to/old/Clipster-Server/db.sqlite3 data/db.sqlite3
-grep SECRET_KEY /path/to/old/Clipster-Server/server/settings.py  # copy the value into .env (see note below)
+grep SECRET_KEY /path/to/old/Clipster-Server/server/settings.py  # copy the value into .env
 docker compose run --rm clipster python manage.py migrate clipster --fake
 docker compose up -d
 ```
@@ -72,7 +72,3 @@ uv run manage.py migrate
 uv run manage.py test
 uv run manage.py runserver
 ```
-
-## Credits
-  
-Clipster-Server is based on [cloud-clipboard](https://github.com/krsoninikhil/cloud-clipboard) and runs as a [Django](https://www.djangoproject.com/) App. To serve the app the lightweight [Gunicorn](https://gunicorn.org/) WSGI HTTP server is used. Static files are served by [Whitenoise](http://whitenoise.evans.io/en/stable/).
