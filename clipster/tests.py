@@ -1,12 +1,32 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
 from clipster.models import Clip
+
+
+# The default hasher is deliberately slow (~1s per hash) and nearly every request in these
+# tests creates or checks a password. Use a fast one, the tests don't check the hash format.
+fast_hasher = override_settings(
+    PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"]
+)
+
+
+def setUpModule():
+    fast_hasher.enable()
+    # Many tests provoke 400/403 responses on purpose; don't log them as warnings
+    logging.disable(logging.CRITICAL)
+
+
+def tearDownModule():
+    logging.disable(logging.NOTSET)
+    fast_hasher.disable()
 
 
 class ApiTests(TestCase):
