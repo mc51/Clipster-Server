@@ -52,7 +52,7 @@ Do a fresh clone as described above, then stop the old service and take over its
 sudo systemctl disable --now clipster_server
 sudo rm /etc/systemd/system/clipster_server.service
 cp /path/to/old/Clipster-Server/db.sqlite3 data/db.sqlite3
-grep SECRET_KEY /path/to/old/Clipster-Server/server/settings.py  # copy the value into .env
+grep SECRET_KEY /path/to/old/Clipster-Server/server/settings.py  # copy the value into .env (see note below)
 docker compose run --rm clipster python manage.py migrate clipster --fake
 docker compose up -d
 ```

@@ -11,7 +11,6 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.password_validation import validate_password, ValidationError
 
 
 class ListClip(APIView):
@@ -32,9 +31,8 @@ class ListClip(APIView):
         return redirect("rest_framework:login")
 
     def post(self, request):
-        permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
-        if permission_classes:  # ignore pylint warning
-            pass
+        if not request.user.is_authenticated:
+            self.permission_denied(request)
         serializer = ClipSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)  # explicitly specifying user
@@ -47,7 +45,7 @@ class CopyPaste(APIView):
     Create new Clip or return all Clips
     """
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly)
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
     def get_all_clips(self, user):
@@ -103,18 +101,11 @@ class UserRegister(APIView):
                     template_name="rest_framework/register.html",
                 )
         elif request.accepted_renderer.format == "json":
-            try:
-                validate_password(request.data["password"])
-            except ValidationError as e:
-                return Response(e, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                serializer = UserSerializer(data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(
-                        serializer.data["username"], status=status.HTTP_201_CREATED
-                    )
+            serializer = UserSerializer(data=request.data)
+            if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()
+            return Response(serializer.data["username"], status=status.HTTP_201_CREATED)
 
 
 class UserVerify(APIView):
@@ -122,7 +113,7 @@ class UserVerify(APIView):
     Check if user exists
     """
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
         return Response(status=status.HTTP_200_OK)
@@ -145,7 +136,10 @@ class ShareClip(APIView):
         return redirect("rest_framework:login")
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            return redirect("rest_framework:login")
         form = ShareClipForm(request.POST)
+        form.instance.user = request.user
         if form.is_valid():
             form.save()
             return redirect("list_clips_frontend")
